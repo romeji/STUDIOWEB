@@ -727,11 +727,11 @@
             /* Sur mobile uniquement (ex: max 768px) */
         @media (max-width: 768px) {
           .stats-ticker {
-            flex-direction: column;
-            align-items: center;
+            display: flex;
+            gap: 40px;
+            margin-top: 40px;
+            animation: fadeInUp 1s ease 0.9s backwards;
             justify-content: center;
-            text-align: center;
-            margin: 0 auto;
           }
         }
 
