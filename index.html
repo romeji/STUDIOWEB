@@ -1,11 +1,6 @@
-        <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
         <script>
-        // Initialiser EmailJS avec votre USER ID
-        (function(){
-            emailjs.init("CYp7N-IF4P4kOd2iL"); // À REMPLACER par votre User ID EmailJS
-        })();
-        
-        // Matrix effect sur canvas principal
+         // Matrix effect
         const canvas = document.getElementById('matrixCanvas');
         const ctx = canvas.getContext('2d');
         
@@ -228,62 +223,7 @@
             });  
         });
                 
-         // Notification system
-        function showNotification(message) {
-            const notification = document.createElement('div');
-            notification.className = 'notification';
-            notification.textContent = message;
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.style.animation = 'slideIn 0.5s ease reverse';
-                setTimeout(() => notification.remove(), 500);
-            }, 4000);
-        }
-                
-        // Gestion du formulaire avec EmailJS
-        const contactForm = document.getElementById('contactForm');
-        const submitBtn = document.getElementById('submitBtn');
-        const btnText = document.getElementById('btnText');
-        const btnLoader = document.getElementById('btnLoader');
-        const formMessage = document.getElementById('formMessage');
-
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Désactiver le bouton et afficher le loader
-            submitBtn.disabled = true;
-            btnText.style.display = 'none';
-            btnLoader.style.display = 'inline';
-            formMessage.style.display = 'none';
-
-            // Formulaire avec envoi d'email
-            emailjs.sendForm('service_nubowcp', 'template_afutqdp', this)
-                .then(function(response) {
-     
-                 })       
-                .then(function() {
-                    showNotification("✅ Message envoyé avec succès !");
-                    document.getElementById('contactForm').reset();
-                }, function(error) {
-                    showNotification("❌ Échec de l’envoi. Réessayez plus tard.");
-                    console.log('FAILED...', error);
-                })
-                .finally(() => {
-                    submitBtn.disabled = false;
-                    btnText.style.display = 'inline';
-                    btnLoader.style.display = 'none';
-                });
-        });
-
-        function showNotification(message) {
-                const notif = document.createElement('div');
-                notif.className = 'notification';
-                notif.textContent = message;
-                document.body.appendChild(notif);
-                setTimeout(() => notif.remove(), 4000);
-         };    
-        
+         
     </script>
 
 <!DOCTYPE html>
@@ -2465,7 +2405,13 @@
         <p style="margin-top: 20px; opacity: 0.6;">© 2025 JL Studio Web. Tous droits réservés.</p>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
+        // Initialiser EmailJS avec votre USER ID
+        (function(){
+            emailjs.init("CYp7N-IF4P4kOd2iL"); // À REMPLACER par votre User ID EmailJS
+        })();
+        
         // Matrix effect sur canvas
         const canvas = document.getElementById('matrixCanvas');
         const ctx = canvas.getContext('2d');
@@ -2645,6 +2591,42 @@
                 el.style.transform = `translateY(${scrolled * 0.3}px)`;
             });
         });
+        // Fonction de notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideIn 0.5s ease reverse';
+                setTimeout(() => notification.remove(), 500);
+            }, 4000);
+        }
+            
+        // Gestion du formulaire
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Envoi en cours...';
+
+            // Utilisation correcte de EmailJS avec sendForm
+            emailjs.sendForm('service_nubowcp', 'template_afutqdp', this)
+                .then(function() {
+                    showNotification("✅ Message envoyé avec succès !", 'success');
+                    document.getElementById('contactForm').reset();
+                }, function(error) {
+                    showNotification("❌ Échec de l'envoi. Réessayez plus tard.", 'error');
+                    console.error('FAILED...', error);
+                })
+                .finally(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Envoyer';
+                });
+        });
+            
     </script>
 </body>
 </html>
