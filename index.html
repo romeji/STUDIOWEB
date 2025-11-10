@@ -227,6 +227,20 @@
                 el.style.transform = `translateY(${scrolled * 0.3}px)`;
             });  
         });
+                
+         // Notification system
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideIn 0.5s ease reverse';
+                setTimeout(() => notification.remove(), 500);
+            }, 4000);
+        }
+                
         // Gestion du formulaire avec EmailJS
         const contactForm = document.getElementById('contactForm');
         const submitBtn = document.getElementById('submitBtn');
@@ -243,38 +257,33 @@
             btnLoader.style.display = 'inline';
             formMessage.style.display = 'none';
 
-            // Envoyer l'email via EmailJS
+            // Formulaire avec envoi d'email
             emailjs.sendForm('service_nubowcp', 'template_afutqdp', this)
                 .then(function(response) {
-                    console.log('SUCCESS!', response.status, response.text);
-                    
-                    // Afficher message de succès
-                    formMessage.textContent = '✅ Message envoyé avec succès ! Nous vous recontacterons rapidement.';
-                    formMessage.style.color = '#28ca42';
-                    formMessage.style.display = 'block';
-                    
-                    // Réinitialiser le formulaire
-                    contactForm.reset();
-                    
-                    // Réactiver le bouton
-                    submitBtn.disabled = false;
-                    btnText.style.display = 'inline';
-                    btnLoader.style.display = 'none';
-                    
+     
+                 })       
+                .then(function() {
+                    showNotification("✅ Message envoyé avec succès !");
+                    document.getElementById('contactForm').reset();
                 }, function(error) {
+                    showNotification("❌ Échec de l’envoi. Réessayez plus tard.");
                     console.log('FAILED...', error);
-                    
-                    // Afficher message d'erreur
-                    formMessage.textContent = '❌ Erreur lors de l\'envoi. Veuillez réessayer ou nous contacter directement.';
-                    formMessage.style.color = '#ff5f57';
-                    formMessage.style.display = 'block';
-                    
-                    // Réactiver le bouton
+                })
+                .finally(() => {
                     submitBtn.disabled = false;
                     btnText.style.display = 'inline';
                     btnLoader.style.display = 'none';
                 });
         });
+
+        function showNotification(message) {
+                const notif = document.createElement('div');
+                notif.className = 'notification';
+                notif.textContent = message;
+                document.body.appendChild(notif);
+                setTimeout(() => notif.remove(), 4000);
+         };    
+        
     </script>
 </body>
 </html><!DOCTYPE html>
