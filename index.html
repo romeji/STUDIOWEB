@@ -252,9 +252,9 @@
 
             // Formulaire avec envoi d'email
             emailjs.sendForm('service_nubowcp', 'template_afutqdp', {
-                    from_name: document.getElementById('name').value,
-                    from_email: document.getElementById('email').value,
-                    phone: document.getElementById('phone').value,
+                    from_name: document.getElementById('user_name').value,
+                    from_email: document.getElementById('user_email').value,
+                    phone: document.getElementById('user_phone').value,
                     message: document.getElementById('message').value
                 })
                 .then(function() {
@@ -2410,7 +2410,6 @@
         <div class="contact-container">
             <h2>💬 Contactez-nous</h2>
             <p style="text-align: center; color: var(--text-secondary); margin-bottom: 40px; font-size: 1.2em;">Prêt à lancer votre site vitrine ? Remplissez le formulaire et recevez votre devis personnalisé !</p>
-            
             <form id="contactForm">
                 <div class="form-group">
                     <label>Nom et Prénom complet *</label>
