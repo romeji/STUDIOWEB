@@ -2355,28 +2355,29 @@
     <div class="contact-section" id="contact">
         <div class="contact-container">
             <h2>💬 Contactez-nous</h2>
-            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 40px; font-size: 1.2em;">Prêt à lancer votre site vitrine ? Remplissez le formulaire et recevez votre devis personnalisé !</p>
-            
+            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 40px; font-size: 1.2em;">
+                Prêt à lancer votre site vitrine ? Remplissez le formulaire et recevez votre devis personnalisé !
+            </p>
             <form id="contactForm">
                 <div class="form-group">
                     <label>Nom et Prénom complet *</label>
-                    <input type="text" name="user_name" required placeholder="Jean Dupont">
+                    <input type="text" name="user_name" id="user_name" required placeholder="Jean Dupont">
                 </div>
                 <div class="form-group">
                     <label>Email *</label>
-                    <input type="email" name="user_email" required placeholder="votre@email.com">
+                    <input type="email" name="user_email" id="user_email" required placeholder="votre@email.com">
                 </div>
                 <div class="form-group">
                     <label>Téléphone *</label>
-                    <input type="tel" name="user_phone" required placeholder="06 12 34 56 78">
+                    <input type="tel" name="user_phone" id="user_phone" required placeholder="06 12 34 56 78">
                 </div>
                 <div class="form-group">
                     <label>Nom de votre entreprise *</label>
-                    <input type="text" name="company_name" required placeholder="Mon Entreprise">
+                    <input type="text" name="company_name" id="company_name" required placeholder="Mon Entreprise">
                 </div>
                 <div class="form-group">
                     <label>Formule souhaitée *</label>
-                    <select required id="formulaSelect" name="formula">
+                    <select required id="formula" name="formula">
                         <option value="">-- Sélectionnez une formule --</option>
                         <option value="site-uniquement">Création de site vitrine uniquement (250€)</option>
                         <option value="site-hebergement">Création de site vitrine + Hébergement (250€ + 15€/mois)</option>
@@ -2386,13 +2387,9 @@
                 </div>
                 <div class="form-group">
                     <label>Exprimez-nous votre projet avec plus de détails ici</label>
-                    <textarea name="message" placeholder="Décrivez votre projet, vos besoins, vos attentes..." required></textarea>
+                    <textarea name="message" id="message" placeholder="Décrivez votre projet, vos besoins, vos attentes..." required></textarea>
                 </div>
-                <button type="submit" class="cta-button" id="submitBtn" style="width: 100%; margin-top: 10px;">
-                    <span id="btnText">Envoyer ma demande</span>
-                    <span id="btnLoader" style="display: none;">⏳ Envoi en cours...</span>
-                </button>
-                <div id="formMessage" style="margin-top: 20px; text-align: center; font-weight: 600; display: none;"></div>
+                <button type="submit" class="cta-button" id="submitBtn">Envoyer</button>
             </form>
         </div>
     </div>
