@@ -241,27 +241,22 @@
             }, 4000);
         }
                 
-        // Gestion du formulaire avec EmailJS
-        const contactForm = document.getElementById('contactForm');
-        const submitBtn = document.getElementById('submitBtn');
-        const btnText = document.getElementById('btnText');
-        const btnLoader = document.getElementById('btnLoader');
-        const formMessage = document.getElementById('formMessage');
-
-        contactForm.addEventListener('submit', function(e) {
+        
+        // Formulaire avec envoi d'email
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            // Désactiver le bouton et afficher le loader
+                
+            const submitBtn = document.querySelector('.submit-btn');
             submitBtn.disabled = true;
-            btnText.style.display = 'none';
-            btnLoader.style.display = 'inline';
-            formMessage.style.display = 'none';
+            submitBtn.textContent = 'Envoi en cours...';
 
             // Formulaire avec envoi d'email
-            emailjs.sendForm('service_nubowcp', 'template_afutqdp', this)
-                .then(function(response) {
-     
-                 })       
+            emailjs.sendForm('service_nubowcp', 'template_afutqdp', {
+                    from_name: document.getElementById('name').value,
+                    from_email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    message: document.getElementById('message').value
+                })
                 .then(function() {
                     showNotification("✅ Message envoyé avec succès !");
                     document.getElementById('contactForm').reset();
@@ -271,8 +266,7 @@
                 })
                 .finally(() => {
                     submitBtn.disabled = false;
-                    btnText.style.display = 'inline';
-                    btnLoader.style.display = 'none';
+                    submitBtn.textContent = 'Envoyer';
                 });
         });
 
@@ -2448,11 +2442,10 @@
                     <label>Exprimez-nous votre projet avec plus de détails ici</label>
                     <textarea name="message" placeholder="Décrivez votre projet, vos besoins, vos attentes..." required></textarea>
                 </div>
-                <button type="submit" class="cta-button" id="submitBtn" style="width: 100%; margin-top: 10px;">
-                    <span id="btnText">Envoyer ma demande</span>
-                    <span id="btnLoader" style="display: none;">⏳ Envoi en cours...</span>
-                </button>
-                <div id="formMessage" style="margin-top: 20px; text-align: center; font-weight: 600; display: none;"></div>
+               
+                    <button type="submit" class="cta-button submit-btn" id="submitBtn" style="width: 100%; margin-top: 10px;">Envoyer</button>
+                    
+                    <div id="formMessage" style="margin-top: 20px; text-align: center; font-weight: 600; display: none;"></div>
             </form>
         </div>
     </div>
