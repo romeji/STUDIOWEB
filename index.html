@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JL Studio — Sites vitrines sur mesure à Dijon</title>
-    <meta name="description" content="Création de sites vitrines professionnels à Dijon et alentours. Un site à votre image, l’hébergement et un accompagnement simple à partir de 59 € par mois.">
+    <title>⚡ JL Studio </Web> - Sites vitrine par abonnement dès 59 €/mois</title>
     <style>
 	:root {
             --bg-primary: #ffffff;
@@ -12,8 +11,8 @@
             --bg-dark: #0f0f0f;
             --text-primary: #1a1a1a;
             --text-secondary: #666;
-            --accent-primary: #846fd0;
-            --accent-secondary: #d29baa;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
             --card-bg: #ffffff;
             --border-color: #e0e0e0;
             --code-bg: #1e1e1e;
@@ -47,6 +46,10 @@
             position: relative;
         }
 
+        body.loader-active {
+            overflow: hidden;
+        }
+
         /* Effet Matrix subtil en arrière-plan */
         .matrix-bg {
             position: fixed;
@@ -68,39 +71,169 @@
             cursor: pointer;
         }
 
+        /* Loader avec effet terminal */
+        .loader-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loader-wrapper.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader-matrix {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.15;
+        }
+
+        .terminal-window {
+            background: #1a1a1a;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            border: 1px solid #333;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        .terminal-header {
+            background: #2a2a2a;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #333;
+        }
+
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .terminal-dot:nth-child(1) { background: #ff5f57; }
+        .terminal-dot:nth-child(2) { background: #ffbd2e; }
+        .terminal-dot:nth-child(3) { background: #28ca42; }
+
+        .terminal-title {
+            color: #888;
+            font-size: 0.85em;
+            margin-left: 10px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .terminal-content {
+            padding: 30px;
+            font-family: 'Courier New', monospace;
+            color: #0f0;
+            font-size: 0.95em;
+            min-height: 200px;
+        }
+
+        .terminal-line {
+            margin: 8px 0;
+            animation: typeWriter 0.5s steps(40) forwards;
+            opacity: 0;
+        }
+
+        .terminal-line:nth-child(1) { animation-delay: 0.2s; }
+        .terminal-line:nth-child(2) { animation-delay: 0.8s; }
+        .terminal-line:nth-child(3) { animation-delay: 1.4s; }
+        .terminal-line:nth-child(4) { animation-delay: 2s; }
+        .terminal-line:nth-child(5) { animation-delay: 2.6s; }
+        .terminal-line:nth-child(6) { animation-delay: 3.2s; }
+
+        @keyframes typeWriter {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .terminal-prompt {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .terminal-success {
+            color: #28ca42;
+        }
+
+        .terminal-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background: #0f0;
+            margin-left: 5px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .skip-hint {
+            position: absolute;
+            bottom: 30px;
+            color: rgba(255,255,255,0.5);
+            font-size: 0.9em;
+            font-family: 'Courier New', monospace;
+            animation: fadeInOut 2s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+        }
+
         /* Navigation flottante avec effet glassmorphism */
         .floating-nav {
             position: fixed;
             top: 30px;
             right: 30px;
-            left: 30px;
             z-index: 1000;
             display: flex;
-            justify-content: flex-end;
-            gap: 10px;
+            gap: 15px;
             align-items: center;
-            pointer-events: none;
         }
 
         .nav-item {
-            background: rgba(255, 255, 255, 0.86);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(65, 55, 85, 0.1);
-            padding: 11px 17px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 12px 20px;
             border-radius: 50px;
-            color: #484253;
+            color: var(--text-primary);
             text-decoration: none;
             font-weight: 600;
             font-size: 0.9em;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(44,35,58,0.07);
-            pointer-events: auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
         .nav-item:hover {
-            background: #fff;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(102, 86, 150, 0.14);
+            background: rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
         }
 
         .theme-toggle {
@@ -114,8 +247,8 @@
         }
 
         .theme-toggle:hover {
-            transform: scale(1.04);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.14);
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
         }
 
         .theme-icon {
@@ -169,9 +302,9 @@
 
         /* Hero moderne avec effet code */
         .hero {
-            min-height: 82vh;
-            background: linear-gradient(120deg, #fbf8f4 0%, #f4f0fb 58%, #faeff1 100%);
-            color: var(--text-primary);
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
             display: flex;
             align-items: center;
             position: relative;
@@ -185,7 +318,10 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: radial-gradient(circle at 85% 20%, rgba(255,255,255,.78) 0%, transparent 32%), radial-gradient(circle at 12% 90%, rgba(215,190,232,.24) 0%, transparent 35%);
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.1) 0%, transparent 50%);
+            animation: pulse 8s ease-in-out infinite;
         }
 
         @keyframes pulse {
@@ -218,15 +354,30 @@
 
         .hero-logo {
             font-size: 1em;
-            color: #e9aa3e;
-            filter: drop-shadow(0 5px 12px rgba(195, 131, 39, .2));
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6));
+            animation: logoSpin 3s ease-in-out infinite;
+        }
+
+        @keyframes logoSpin {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(10deg) scale(1.1); }
         }
 
         .closing-tag {
-            color: var(--accent-primary);
-            font-family: inherit;
-            font-size: .48em;
-            font-weight: 650;
+            color: #ff6b9d;
+            font-family: 'Courier New', monospace;
+            animation: tagBlink 2s ease-in-out infinite;
+        }
+
+        @keyframes tagBlink {
+            0%, 100% { 
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 0.7;
+                transform: scale(1.05);
+            }
         }
 
         @keyframes fadeInLeft {
@@ -305,14 +456,13 @@
             display: inline-block;
             padding: 20px 50px;
             background: white;
-            background: linear-gradient(135deg, #7463ca, #a47bb6);
-            color: #fff;
+            color: #667eea;
             text-decoration: none;
             border-radius: 50px;
             font-weight: bold;
             font-size: 1.2em;
             transition: all 0.3s ease;
-            box-shadow: 0 10px 28px rgba(116,99,202,0.22);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             margin-top: 20px;
             animation: fadeInUp 1s ease 0.7s backwards;
             position: relative;
@@ -327,7 +477,7 @@
             width: 0;
             height: 0;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(102, 126, 234, 0.1);
             transform: translate(-50%, -50%);
             transition: width 0.6s, height 0.6s;
         }
@@ -339,7 +489,7 @@
 
         .cta-button:hover {
             transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 15px 40px rgba(116,99,202,0.28);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.4);
         }
 
         /* Stats en temps réel */
@@ -367,9 +517,9 @@
         .stat-number {
             font-size: 2.5em;
             font-weight: 900;
-            font-family: inherit;
-            color: #725fc2;
-            text-shadow: none;
+            font-family: 'Courier New', monospace;
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
         }
 
         .stat-label {
@@ -440,7 +590,7 @@
 
         .code-content {
             padding: 30px;
-            font-family: 'Courier New', ui-monospace, monospace;
+            font-family: 'Courier New', monospace;
             font-size: 0.9em;
             line-height: 1.8;
             color: #d4d4d4;
@@ -485,11 +635,11 @@
             }
         }
 
-        .code-tag { color: #705fac; }
-        .code-attr { color: #426786; }
-        .code-value { color: #a0523b; }
-        .code-comment { color: #71805e; }
-        .code-function { color: #8b6d2d; }
+        .code-tag { color: #569cd6; }
+        .code-attr { color: #9cdcfe; }
+        .code-value { color: #ce9178; }
+        .code-comment { color: #6a9955; }
+        .code-function { color: #dcdcaa; }
 
         /* Container avec effet parallax */
         .container {
@@ -837,12 +987,10 @@
             background: var(--bg-primary);
         }
 
-        .examples-section .section-subtitle { max-width: 680px; margin-left: auto; margin-right: auto; }
-
         .examples-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-            gap: 28px;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
             margin-top: 60px;
         }
 
@@ -855,9 +1003,6 @@
             border: 2px solid var(--border-color);
             animation: fadeInUp 0.8s ease backwards;
             cursor: pointer;
-            color: inherit;
-            text-decoration: none;
-            display: block;
         }
 
         .example-card:nth-child(1) { animation-delay: 0.2s; }
@@ -865,81 +1010,46 @@
         .example-card:nth-child(3) { animation-delay: 0.6s; }
 
         .example-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 22px 50px rgba(45,35,62,0.14);
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.2);
         }
 
         .example-image {
             width: 100%;
-            aspect-ratio: 16 / 10;
+            height: 280px;
             position: relative;
             overflow: hidden;
-            background: #f5f2f8;
+        }
+
+        .example-card:nth-child(1) .example-image {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .example-card:nth-child(2) .example-image {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+
+        .example-card:nth-child(3) .example-image {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
         }
 
         .example-mockup {
-            position: relative;
-            width: 100%;
-            height: 100%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 85%;
+            height: 80%;
             background: white;
-            border: 0;
-            border-radius: 0;
-            overflow: hidden;
-            box-shadow: none;
-            transition: none;
-        }
-
-        .example-mockup img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: top center;
-            display: block;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
         }
 
         .example-card:hover .example-mockup {
-            transform: none;
+            transform: translate(-50%, -50%) scale(1.05);
         }
-
-        .example-info { padding: 20px 22px 22px; }
-        .example-info h3 { color: var(--text-primary); margin-bottom: 8px; }
-        .example-info p { color: var(--text-secondary); line-height: 1.6; }
-        .example-info .example-link { margin-top: 12px; color: #5b4b92; font-weight: 700; }
-        .example-info .example-link span { margin-left: 5px; }
-        .hero-kicker { text-transform: uppercase; letter-spacing: .13em; font-weight: 750; font-size: .82rem; color: #66559e; margin-bottom: 10px; }
-        .hero-reassurance { font-size: .9rem; color: #746f7e; margin-top: 12px; }
-        .local-note { max-width: 1120px; margin: 0 auto; padding: 26px 28px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 18px; background: #fff; border: 1px solid #eee8f1; border-radius: 20px; box-shadow: 0 12px 32px rgba(48,35,59,.055); transform: translateY(-20px); position: relative; z-index: 3; }
-        .local-note-mark { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 15px; background: #fbf2e5; color: #d99b36; font-size: 1.45rem; }
-        .local-note-copy strong { display: block; margin-bottom: 4px; color: #54467a; font-size: 1.02rem; }
-        .local-note-copy p { color: #686477; line-height: 1.55; }
-        .local-note-aside { padding-left: 18px; border-left: 1px solid #ede8f0; color: #706b7a; font-size: .9rem; line-height: 1.55; }
-        .local-note-aside strong { color: #54467a; }
-        @media (max-width: 700px) { .local-note { margin: 0 16px; padding: 20px; grid-template-columns: auto 1fr; transform: translateY(-8px); gap: 12px; } .local-note-aside { grid-column: 1/-1; border-left: 0; border-top: 1px solid #ede8f0; padding: 12px 0 0; } }
-
-        /* Les éléments ajoutés à la landing suivent aussi le thème sombre. */
-        .dark-mode .hero {
-            background: linear-gradient(120deg, #17151b 0%, #211c2b 58%, #241b20 100%);
-        }
-        .dark-mode .hero::before {
-            background: radial-gradient(circle at 85% 20%, rgba(255,255,255,.07) 0%, transparent 32%), radial-gradient(circle at 12% 90%, rgba(165,137,200,.12) 0%, transparent 35%);
-        }
-        .dark-mode .hero-kicker, .dark-mode .closing-tag { color: #c7b9f2; }
-        .dark-mode .hero-reassurance { color: #c3bdce; }
-        .dark-mode .feature-badge { background: #26212f; color: #eee9f7; border-color: #3c3547; }
-        .dark-mode .feature-badge:hover { background: #332b40; }
-        .dark-mode .code-window { box-shadow: 0 30px 90px rgba(0,0,0,.45); }
-        .dark-mode .local-note { background: #1a1821; border-color: #383341; box-shadow: 0 12px 32px rgba(0,0,0,.2); }
-        .dark-mode .local-note-mark { background: #302719; color: #f1c066; }
-        .dark-mode .local-note-copy strong, .dark-mode .local-note-aside strong { color: #ded3ff; }
-        .dark-mode .local-note-copy p, .dark-mode .local-note-aside { color: #c3bdce; }
-        .dark-mode .local-note-aside { border-color: #383341; }
-        .dark-mode .example-image { background: #17151b; }
-        .dark-mode .example-mockup { background: #1e1b25; }
-        .dark-mode .example-info .example-link { color: #c3b1ff; }
-        .dark-mode .skip-link { background: #211c2b; color: #f4f0fa; }
-        .skip-link { position: fixed; top: 12px; left: 12px; z-index: 100001; padding: 12px 16px; border-radius: 10px; background: #fff; color: #322b45; transform: translateY(-160%); box-shadow: 0 4px 18px #322b4522; }
-        .skip-link:focus { transform: translateY(0); }
-        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; } }
 
         .mockup-header {
             height: 30px;
@@ -1330,8 +1440,6 @@
             transition: all 0.3s ease;
             z-index: 999;
             box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-            border: 0;
-            padding: 0;
         }
 
         .scroll-top.visible {
@@ -1349,14 +1457,11 @@
             .floating-nav {
                 top: 15px;
                 right: 15px;
-                left: auto;
                 gap: 10px;
             }
 
             .nav-item {
-                display: inline-block;
-                padding: 9px 12px;
-                font-size: .8em;
+                display: none;
             }
 
             .hero-content {
@@ -1564,6 +1669,15 @@
                 padding: 60px 20px;
             }
 
+            .terminal-window {
+                width: 95%;
+            }
+
+            .terminal-content {
+                padding: 20px;
+                font-size: 0.85em;
+            }
+
             .scroll-top {
                 bottom: 20px;
                 left: 20px;
@@ -1573,18 +1687,6 @@
         }
 
         @media (max-width: 480px) {
-            .floating-nav { top: 10px; right: 10px; gap: 6px; }
-            .floating-nav .nav-item:not(.nav-cta) { display: none; }
-            .floating-nav .nav-cta { font-size: .75em; padding: 8px 10px; }
-            .theme-toggle { padding: 7px 10px; }
-            .hero-content { padding-top: 82px; }
-            .hero-text h1 { font-size: 2.3em; }
-            .closing-tag { flex-basis: 100%; font-size: .43em; }
-            .preview-site { min-height: 300px; padding: 16px; gap: 12px; }
-            .preview-site-copy p { font-size: .76em; }
-            .preview-site-photo { border-radius: 55px 55px 16px 16px; }
-            .stat-item { min-width: 0; }
-            .stats-ticker { gap: 14px; }
             .hero-text h1 {
                 font-size: 3em;
             }
@@ -1683,48 +1785,79 @@
         #previewServices span { padding: 8px 12px; border-radius: 30px; background: white; }
     </style>	
 </head>
-<body>
-    <a class="skip-link" href="#contenu">Aller au contenu</a>
+<body class="loader-active">
+    <!-- Canvas pour effet Matrix -->
+    <canvas class="matrix-bg" id="matrixCanvas"></canvas>
+
+    <!-- Loader avec effet terminal -->
+    <div class="loader-wrapper" id="loader">
+        <canvas class="loader-matrix" id="loaderMatrix"></canvas>
+        <div class="terminal-window">
+            <div class="terminal-header">
+                <div class="terminal-dot"></div>
+                <div class="terminal-dot"></div>
+                <div class="terminal-dot"></div>
+                <span class="terminal-title">bash - JL Studio Web</span>
+            </div>
+            <div class="terminal-content">
+                <div class="terminal-line"><span class="terminal-prompt">$</span> npm install jl-studio-web</div>
+                <div class="terminal-line">⚡ Initializing project...</div>
+                <div class="terminal-line">📦 Loading modules...</div>
+                <div class="terminal-line">🎨 Compiling assets...</div>
+                <div class="terminal-line">✅ Build complete!</div>
+                <div class="terminal-line"><span class="terminal-success">🚀 Ready to deploy</span><span class="terminal-cursor"></span></div>
+            </div>
+        </div>
+        <div class="skip-hint">// Cliquez pour continuer</div>
+    </div>
+
+    <!-- Particles flottantes -->
+    <div class="particles">
+        <div class="particle">⚡</div>
+        <div class="particle">💻</div>
+        <div class="particle">🚀</div>
+        <div class="particle">✨</div>
+        <div class="particle">💎</div>
+        <div class="particle">🔥</div>
+        <div class="particle">⚙️</div>
+        <div class="particle">📱</div>
+    </div>
 
     <!-- Navigation flottante -->
     <div class="floating-nav">
-        <a href="#realisations" class="nav-item">Réalisations</a>
-        <a href="#abonnements" class="nav-item">Formules</a>
-        <a href="/questionnaire" class="nav-item nav-cta">Parler de mon projet ↗</a>
-        <button type="button" class="theme-toggle" id="themeToggle" aria-label="Activer le thème sombre" aria-pressed="false">
+        <a href="#offre" class="nav-item">🎯 Offres</a>
+        <a href="/questionnaire" class="nav-item">📋 Votre projet</a>
+        <div class="theme-toggle" id="themeToggle">
             <span class="theme-icon" id="themeIcon">🌙</span>
-        </button>
+        </div>
     </div>
 
     <!-- Scroll to top -->
-    <button type="button" class="scroll-top" id="scrollTop" aria-label="Remonter en haut de page">↑</button>
+    <div class="scroll-top" id="scrollTop">↑</div>
 
     <!-- Hero Section -->
-    <main id="contenu">
-    <section class="hero">
+    <div class="hero">
         <div class="hero-content">
             <div class="hero-text">
-                <p class="hero-kicker">Création de sites vitrines · Dijon & Bourgogne</p>
-                <h1><span class="hero-logo" aria-hidden="true">⚡</span> JL Studio <span class="closing-tag">Des sites pensés pour vous.</span></h1>
-                <p class="hero-subtitle">Je crée un site professionnel à l’image de votre activité et reste votre contact direct, du premier échange aux ajustements.</p>
+                <h1><span class="hero-logo">⚡</span>JL Studio <span class="closing-tag">&lt;/Web&gt;</span></h1>
+                <p class="hero-subtitle">Votre site professionnel, votre réservation et un interlocuteur qui s’occupe de tout. Dès 59 €/mois.</p>
                 
                 <div class="hero-features">
                     <div class="feature-badge">🌐 Domaine et hébergement inclus</div>
-                    <div class="feature-badge">✦ Un design sur mesure</div>
-                    <div class="feature-badge">🤝 Vous échangez directement avec moi</div>
+                    <div class="feature-badge">💎 Design Premium</div>
+                    <div class="feature-badge">🤝 Accompagnement humain</div>
                 </div>
 
-                <a href="/questionnaire" class="cta-button">Parler de mon projet <span aria-hidden="true">↗</span></a>
-                <p class="hero-reassurance">Questionnaire simple · premier aperçu personnalisé · sans engagement</p>
+                <a href="#offre" class="cta-button">⚡ Démarrer mon projet</a>
 
                 <div class="stats-ticker">
                     <div class="stat-item">
-                    <div class="stat-number">59 €</div>
-                    <div class="stat-label">dès / mois</div>
+                        <div class="stat-number">59 €</div>
+                        <div class="stat-label">Dès / mois</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-number">99 €</div>
-                    <div class="stat-label">de création dès</div>
+                        <div class="stat-label">Création avec Accompagnement</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-number">3</div>
@@ -1734,8 +1867,8 @@
             </div>
 
             <div class="hero-visual">
-                <div class="code-window" aria-label="Aperçu du processus de création de votre site">
-                    <div class="window-header" aria-hidden="true">
+                <div class="code-window">
+                    <div class="window-header">
                         <div class="window-dot"></div>
                         <div class="window-dot"></div>
                         <div class="window-dot"></div>
@@ -1755,16 +1888,7 @@
                 </div>
             </div>
         </div>
-    </section>
-
-    <section class="local-note" aria-label="Une jeune entreprise bourguignonne à votre écoute">
-        <div class="local-note-mark" aria-hidden="true">⚡</div>
-        <div class="local-note-copy">
-            <strong>Une jeune entreprise bourguignonne, à taille humaine</strong>
-            <p>JL Studio est né à Dijon d’une passion pour le web et le travail bien fait. En me confiant votre projet, vous échangez directement avec moi et faites grandir une entreprise locale.</p>
-        </div>
-        <div class="local-note-aside"><strong>Je reste joignable</strong><br>Par mail, téléphone ou Instagram, selon ce qui vous convient.</div>
-    </section>
+    </div>
 
     <!-- Section C'est quoi -->
     <div class="what-is">
@@ -1789,7 +1913,7 @@
                 <div class="benefit-card">
                     <div class="benefit-icon">🔍</div>
                     <h3>Visibilité en ligne</h3>
-                    <p>Un site bien structuré aide vos clients à trouver les bonnes informations et constitue une base pour votre visibilité locale.</p>
+                    <p>Soyez visible sur Google et touchez de nouveaux clients potentiels chaque jour.</p>
                 </div>
                 <div class="benefit-card">
                     <div class="benefit-icon">💼</div>
@@ -1818,7 +1942,7 @@
                         <div class="timeline-content">
                             <div class="timeline-icon">📋</div>
                             <h3>Brief & Consultation</h3>
-                            <p>Vous me partagez votre vision, vos besoins et votre identité. J’étudie votre activité et prépare une première direction adaptée.</p>
+                            <p>Vous nous partagez votre vision, vos besoins et votre identité. Nous analysons et créons un plan d'action personnalisé.</p>
                         </div>
                     </div>
 
@@ -1827,7 +1951,7 @@
                         <div class="timeline-content">
                             <div class="timeline-icon">🎨</div>
                             <h3>Design & Développement </h3>
-                            <p>Je conçois votre site vitrine à partir de vos contenus, avec un design adapté au mobile et les bases du référencement naturel.</p>
+                            <p>Nous concevons votre site vitrine à partir de vos contenus, avec un design adapté au mobile et les bases du référencement naturel.</p>
                         </div>
                     </div>
 
@@ -1836,7 +1960,7 @@
                         <div class="timeline-content">
                             <div class="timeline-icon">🚀</div>
                             <h3>Mise en ligne & Suivi</h3>
-                            <p>Après votre validation, je mets votre site en ligne sur votre domaine. Votre abonnement couvre l’hébergement et l’accompagnement prévus dans votre formule.</p>
+                            <p>Après votre validation, nous mettons votre site en ligne sur votre domaine. Votre abonnement couvre l’hébergement et l’accompagnement prévus dans votre formule.</p>
                         </div>
                     </div>
                 </div>
@@ -1852,39 +1976,93 @@
                 <div class="trust-label">Abonnement dès</div>
             </div>
             <div class="trust-stat">
-                <div class="trust-number">À Dijon</div>
-                <div class="trust-label">Une entreprise bourguignonne à taille humaine</div>
+                <div class="trust-number">Clé en main</div>
+                <div class="trust-label">Domaine et hébergement inclus</div>
             </div>
             <div class="trust-stat">
-                <div class="trust-number">En direct</div>
-                <div class="trust-label">Joignable par mail, téléphone ou Instagram</div>
+                <div class="trust-number">À vos côtés</div>
+                <div class="trust-label">Assistance par mail en jours ouvrés</div>
             </div>
         </div>
     </div>
 
     <!-- Section Exemples -->
-    <div class="examples-section" id="realisations">
+    <div class="examples-section">
         <div class="container">
             <h2 class="section-title"><span>🎨</span> Exemples de nos réalisations</h2>
             <p class="section-subtitle">
-                Quelques projets que j’ai eu plaisir à créer pour des activités et des univers différents.
+                Découvrez le type de sites vitrines que nous créons pour nos clients. Design moderne, professionnel et impactant.
             </p>
 
             <div class="examples-grid">
-                <a class="example-card" href="https://nabe-lyart.vercel.app/" target="_blank" rel="noopener noreferrer">
-                    <div class="example-image"><div class="example-mockup"><img src="assets/portfolio/nabe.png" alt="Aperçu du site Nabe, créations de bijoux faites à la main" loading="lazy" decoding="async"></div></div>
-                    <div class="example-info"><h3>✦ Nabe · Bijoux faits main</h3><p>Un site de marque lumineux dédié aux créations de bijoux façonnées à la main.</p><p class="example-link">Découvrir le site <span aria-hidden="true">↗</span></p></div>
-                </a>
+                <div class="example-card" onclick="window.open('https://romeji.github.io/Immotransaction/', '_blank')">
+                    <div class="example-image">
+                        <div class="example-mockup">
+                            <div class="mockup-header">
+                                <div class="mockup-dot"></div>
+                                <div class="mockup-dot"></div>
+                                <div class="mockup-dot"></div>
+                            </div>
+                            <div class="mockup-content">
+                                <div class="mockup-line"></div>
+                                <div class="mockup-line short"></div>
+                                <div class="mockup-line"></div>
+                                <div class="mockup-line"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="example-info">
+                        <h3>🏠 Agence Immobilière</h3>
+                        <p>Site élégant présentant les biens, services et expertise de l'agence avec galerie photos intégrée.</p>
+                        <p style="margin-top: 10px; font-size: 0.9em; color: var(--accent-primary); font-weight: 600;">👉 Cliquez pour voir le site</p>
+                    </div>
+                </div>
 
-                <a class="example-card" href="https://romeji.github.io/L-Instant-Lumi-re/" target="_blank" rel="noopener noreferrer">
-                    <div class="example-image"><div class="example-mockup"><img src="assets/portfolio/instant-lumiere.png" alt="Aperçu du site du salon L’Instant Lumière" loading="lazy" decoding="async"></div></div>
-                    <div class="example-info"><h3>✂ L’Instant Lumière · Salon</h3><p>Un univers doux et élégant pour présenter le salon et ses prestations.</p><p class="example-link">Découvrir le site <span aria-hidden="true">↗</span></p></div>
-                </a>
+                <div class="example-card" onclick="window.open('https://romeji.github.io/L-Instant-Lumi-re/', '_blank')">
+                    <div class="example-image">
+                        <div class="example-mockup">
+                            <div class="mockup-header">
+                                <div class="mockup-dot"></div>
+                                <div class="mockup-dot"></div>
+                                <div class="mockup-dot"></div>
+                            </div>
+                            <div class="mockup-content">
+                                <div class="mockup-line"></div>
+                                <div class="mockup-line short"></div>
+                                <div class="mockup-line"></div>
+                                <div class="mockup-line"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="example-info">
+                        <h3>💇 Salon de Coiffure</h3>
+                        <p>Design moderne et lumineux mettant en valeur les services, tarifs et l'ambiance du salon de coiffure.</p>
+                        <p style="margin-top: 10px; font-size: 0.9em; color: var(--accent-primary); font-weight: 600;">👉 Cliquez pour voir le site</p>
+                    </div>
+                </div>
 
-                <a class="example-card" href="https://romeji.github.io/LaTableDemilie/" target="_blank" rel="noopener noreferrer">
-                    <div class="example-image"><div class="example-mockup"><img src="assets/portfolio/table-emilie.png" alt="Aperçu du site du restaurant La Table d’Émilie" loading="lazy" decoding="async"></div></div>
-                    <div class="example-info"><h3>🍽 La Table d’Émilie · Restaurant</h3><p>Une vitrine gourmande pour partager la cuisine et inviter à réserver.</p><p class="example-link">Découvrir le site <span aria-hidden="true">↗</span></p></div>
-                </a>
+                <div class="example-card" onclick="window.open('https://romeji.github.io/LaTableDemilie/', '_blank')">
+                    <div class="example-image">
+                        <div class="example-mockup">
+                            <div class="mockup-header">
+                                <div class="mockup-dot"></div>
+                                <div class="mockup-dot"></div>
+                                <div class="mockup-dot"></div>
+                            </div>
+                            <div class="mockup-content">
+                                <div class="mockup-line"></div>
+                                <div class="mockup-line short"></div>
+                                <div class="mockup-line"></div>
+                                <div class="mockup-line"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="example-info">
+                        <h3>🍽️ Restaurant</h3>
+                        <p>Site gourmand présentant le menu, l'ambiance et les informations pratiques du restaurant.</p>
+                        <p style="margin-top: 10px; font-size: 0.9em; color: var(--accent-primary); font-weight: 600;">👉 Cliquez pour voir le site</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1967,24 +2145,107 @@
     <div class="contact-section" id="contact">
         <div class="contact-container">
             <h2>Votre premier aperçu commence ici</h2>
-            <p style="text-align:center;color:var(--text-secondary);margin-bottom:24px;font-size:1.15em;">Parlez-moi de votre activité. Je préparerai une première proposition de site, puis on pourra l’adapter ensemble. Vous échangez directement avec le créateur du site, ici en Bourgogne.</p>
+            <p style="text-align:center;color:var(--text-secondary);margin-bottom:24px;font-size:1.15em;">Répondez au questionnaire. Je préparerai une première proposition de site, puis nous pourrons l’adapter ensemble.</p>
             <a class="cta-button" style="display:block;text-align:center" href="/questionnaire">Commencer le questionnaire</a>
             <p style="text-align:center;color:var(--text-secondary);margin-top:18px">Pas de paiement à cette étape. Vous pourrez demander vos modifications en répondant à l’email de présentation.</p>
         </div>
     </div>
 
 
-    </main>
-
     <!-- Footer -->
     <footer>
-        <h3>⚡ JL Studio</h3>
-        <p>Sites vitrines par abonnement · Dès 59 €/mois, création dès 99 €</p>
+        <h3>⚡ JL Studio <span class="closing-tag">&lt;/Web&gt;</span></h3>
+        <p>Sites vitrine par abonnement • Dès 59 €/mois + 199 € de création</p>
         <p style="margin-top: 20px; opacity: 0.6;">© 2026 JL Studio Web. Tous droits réservés.</p>
     </footer>
 
     <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
+        // Initialiser EmailJS
+        (function(){
+            emailjs.init("CYp7N-IF4P4kOd2iL");
+        })();
+        
+        // Fonction utilitaire pour l'effet Matrix
+        function createMatrixEffect(canvas, isDarkMode = false) {
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const chars = '01⚡</>{}[];';
+            const fontSize = 14;
+            const columns = canvas.width / fontSize;
+            const drops = Array(Math.floor(columns)).fill(1);
+            
+            return function drawMatrix() {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = isDarkMode ? '#0f0' : '#667eea';
+                ctx.font = fontSize + 'px monospace';
+                
+                for (let i = 0; i < drops.length; i++) {
+                    const text = chars[Math.floor(Math.random() * chars.length)];
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            };
+        }
+        
+        // Effet Matrix principal
+        const mainCanvas = document.getElementById('matrixCanvas');
+        const mainMatrixDraw = createMatrixEffect(mainCanvas, false);
+        const mainMatrixInterval = setInterval(() => {
+            mainMatrixDraw();
+        }, 50);
+        
+        // Effet Matrix du loader
+        const loaderCanvas = document.getElementById('loaderMatrix');
+        const loaderMatrixDraw = createMatrixEffect(loaderCanvas, true);
+        const loaderMatrixInterval = setInterval(loaderMatrixDraw, 50);
+        
+        // Gestion du redimensionnement
+        window.addEventListener('resize', () => {
+            mainCanvas.width = window.innerWidth;
+            mainCanvas.height = window.innerHeight;
+            loaderCanvas.width = window.innerWidth;
+            loaderCanvas.height = window.innerHeight;
+        });
+
+        // Gestion du loader
+        const loader = document.getElementById('loader');
+        let loadingTimeout;
+        
+        function hideLoader() {
+            clearTimeout(loadingTimeout);
+            clearInterval(loaderMatrixInterval);
+            loader.classList.add('hidden');
+            document.body.classList.remove('loader-active');
+            setTimeout(() => {
+                loader.style.display = 'none';
+            }, 500);
+        }
+        
+        loadingTimeout = setTimeout(hideLoader, 4000);
+        loader.addEventListener('click', hideLoader);
+        
+        // Gestion du swipe pour mobile
+        let touchStartY = 0;
+        loader.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+        
+        loader.addEventListener('touchend', (e) => {
+            const touchEndY = e.changedTouches[0].clientY;
+            const swipeDistance = touchEndY - touchStartY;
+            if (swipeDistance > 80) hideLoader();
+        }, { passive: true });
+
         // Theme toggle
         const themeToggle = document.getElementById('themeToggle');
         const themeIcon = document.getElementById('themeIcon');
@@ -1992,8 +2253,6 @@
         themeToggle.addEventListener('click', () => {
             const isDark = document.body.classList.toggle('dark-mode');
             themeIcon.textContent = isDark ? '☀️' : '🌙';
-            themeToggle.setAttribute('aria-pressed', String(isDark));
-            themeToggle.setAttribute('aria-label', isDark ? 'Activer le thème clair' : 'Activer le thème sombre');
         });
 
         // Compteurs animés
