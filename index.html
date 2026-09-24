@@ -439,11 +439,12 @@
         .window-dot:nth-child(3):hover { box-shadow: 0 0 10px #28ca42; }
 
         .code-content {
-            padding: 30px;
-            font-family: inherit;
-            font-size: 1em;
-            line-height: 1.65;
+            padding: clamp(18px,2.5vw,30px);
+            font-family: 'Courier New', ui-monospace, monospace;
+            font-size: clamp(.72rem,.9vw,.9rem);
+            line-height: 1.8;
             color: #424052;
+            overflow-wrap: anywhere;
         }
 
         .code-line {
@@ -451,7 +452,8 @@
             margin: 5px 0;
             opacity: 1;
             position: relative;
-            padding-left: 30px;
+            padding-left: 26px;
+            overflow-wrap: anywhere;
         }
 
         .code-line::before {
@@ -484,11 +486,11 @@
             }
         }
 
-        .code-tag { color: #569cd6; }
-        .code-attr { color: #9cdcfe; }
-        .code-value { color: #ce9178; }
-        .code-comment { color: #6a9955; }
-        .code-function { color: #dcdcaa; }
+        .code-tag { color: #705fac; }
+        .code-attr { color: #426786; }
+        .code-value { color: #a0523b; }
+        .code-comment { color: #71805e; }
+        .code-function { color: #8b6d2d; }
 
         /* Container avec effet parallax */
         .container {
@@ -870,11 +872,11 @@
 
         .example-image {
             width: 100%;
-            height: 250px;
+            aspect-ratio: 16 / 10;
             position: relative;
             overflow: hidden;
             background: #f5f2f8;
-            padding: 14px;
+            padding: 10px;
         }
 
         .example-mockup {
@@ -892,7 +894,7 @@
         .example-mockup img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
             object-position: top center;
             display: block;
         }
@@ -915,21 +917,6 @@
         .local-note-aside { padding-left: 18px; border-left: 1px solid #ede8f0; color: #706b7a; font-size: .9rem; line-height: 1.55; }
         .local-note-aside strong { color: #54467a; }
         @media (max-width: 700px) { .local-note { margin: 0 16px; padding: 20px; grid-template-columns: auto 1fr; transform: translateY(-8px); gap: 12px; } .local-note-aside { grid-column: 1/-1; border-left: 0; border-top: 1px solid #ede8f0; padding: 12px 0 0; } }
-        .preview-browserbar { height: 36px; display: flex; align-items: center; gap: 6px; padding: 0 12px; border-bottom: 1px solid #f0edf4; }
-        .preview-browserbar span { width: 9px; height: 9px; border-radius: 50%; background: #e9c4c8; }
-        .preview-browserbar span:nth-child(2) { background: #f1d79a; }
-        .preview-browserbar span:nth-child(3) { background: #b9d7c1; }
-        .preview-browserbar small { margin-left: 8px; color: #a39dac; font-size: .72rem; }
-        .preview-site { min-height: 330px; padding: 22px; display: grid; grid-template-columns: 1.2fr .8fr; grid-template-rows: auto 1fr; gap: 20px; background: linear-gradient(140deg,#fff,#fbf7f4); }
-        .preview-site-brand { grid-column: 1/-1; font-size: .75rem; letter-spacing: .08em; font-weight: 750; color: #4f485b; }
-        .preview-site-brand span { color: #e6ab46; font-size: 1.3rem; }
-        .preview-site-copy { align-self: center; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
-        .preview-site-kicker { font-size: .6rem; letter-spacing: .09em; color: #66559e; font-weight: 750; }
-        .preview-site-copy strong { font-size: clamp(1.3rem,2.2vw,2rem); line-height: 1.08; letter-spacing: -.035em; color: #333044; }
-        .preview-site-copy p { font-size: .85rem; color: #726e7c; line-height: 1.5; }
-        .preview-site-cta { display: inline-block; background: #7968c4; color: white; border-radius: 30px; padding: 10px 14px; font-size: .72rem; font-weight: 700; }
-        .preview-site-photo { border-radius: 90px 90px 22px 22px; background: linear-gradient(160deg,rgba(248,232,216,.45),rgba(183,158,205,.5)),radial-gradient(ellipse at 54% 27%,#e5c9a8 0 10%,transparent 11%),linear-gradient(135deg,#ddd4e4,#f1ddd5); display: flex; align-items: flex-end; justify-content: center; padding: 12px; }
-        .preview-site-photo span { background: #fffdfbde; padding: 8px 10px; border-radius: 30px; color: #655a70; font-size: .68rem; }
         .skip-link { position: fixed; top: 12px; left: 12px; z-index: 100001; padding: 12px 16px; border-radius: 10px; background: #fff; color: #322b45; transform: translateY(-160%); box-shadow: 0 4px 18px #322b4522; }
         .skip-link:focus { transform: translateY(0); }
         @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; } }
@@ -1727,12 +1714,23 @@
             </div>
 
             <div class="hero-visual">
-                <div class="code-window" aria-label="Aperçu illustratif d’un site vitrine">
-                    <div class="preview-browserbar"><span></span><span></span><span></span><small>votre-entreprise.fr</small></div>
-                    <div class="preview-site">
-                        <div class="preview-site-brand"><span aria-hidden="true">⚡</span> VOTRE ENTREPRISE</div>
-                        <div class="preview-site-copy"><span class="preview-site-kicker">VOTRE SAVOIR-FAIRE, TOUT SIMPLEMENT</span><strong>Un accueil qui vous ressemble.</strong><p>Présentez vos services et aidez vos clients à passer à l’action.</p><span class="preview-site-cta">Prendre rendez-vous&nbsp; ↗</span></div>
-                        <div class="preview-site-photo" aria-hidden="true"><span>Un site à votre image</span></div>
+                <div class="code-window" aria-label="Aperçu du processus de création de votre site">
+                    <div class="window-header" aria-hidden="true">
+                        <div class="window-dot"></div>
+                        <div class="window-dot"></div>
+                        <div class="window-dot"></div>
+                    </div>
+                    <div class="code-content">
+                        <span class="code-line" data-line="1"><span class="code-comment">// Votre site en quelques lignes</span></span>
+                        <span class="code-line" data-line="2"><span class="code-tag">const</span> <span class="code-attr">site</span> = {</span>
+                        <span class="code-line" data-line="3">  <span class="code-attr">client</span>: <span class="code-value">"VotreEntreprise"</span>,</span>
+                        <span class="code-line" data-line="4">  <span class="code-attr">design</span>: <span class="code-value">"moderne"</span>,</span>
+                        <span class="code-line" data-line="5">  <span class="code-attr">responsive</span>: <span class="code-value">true</span>,</span>
+                        <span class="code-line" data-line="6">  <span class="code-attr">seo</span>: <span class="code-value">"optimisé"</span>,</span>
+                        <span class="code-line" data-line="7">  <span class="code-attr">accompagnement</span>: <span class="code-value">"inclus"</span></span>
+                        <span class="code-line" data-line="8">};</span>
+                        <span class="code-line" data-line="9"></span>
+                        <span class="code-line" data-line="10"><span class="code-function">deploy</span>(<span class="code-attr">site</span>); <span class="code-comment">// ⚡ Magic!</span></span>
                     </div>
                 </div>
             </div>
