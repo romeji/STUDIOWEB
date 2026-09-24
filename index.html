@@ -367,6 +367,22 @@
             overflow: hidden;
         }
 
+        body:not(.dark-mode) .hero {
+            background: linear-gradient(135deg, #fff8ef 0%, #edf3ff 55%, #f7efff 100%);
+            color: #202139;
+        }
+
+        body:not(.dark-mode) .hero::before {
+            background:
+                radial-gradient(circle at 18% 48%, rgba(255, 255, 255, 0.9) 0%, transparent 46%),
+                radial-gradient(circle at 82% 76%, rgba(102, 126, 234, 0.10) 0%, transparent 48%);
+        }
+
+        body:not(.dark-mode) .hero .hero-subtitle { color: #53596e; }
+        body:not(.dark-mode) .hero .feature-badge,
+        body:not(.dark-mode) .hero .stat-item { color: #292b40; }
+        body:not(.dark-mode) .hero .stat-item { background: rgba(255,255,255,.64); border-color: rgba(73,82,123,.12); }
+
         .hero::before {
             content: '';
             position: absolute;
@@ -1890,8 +1906,8 @@
     <div class="hero">
         <div class="hero-content">
             <div class="hero-text">
-                <h1><span class="hero-logo">⚡</span>JL Studio <span class="closing-tag">&lt;/Web&gt;</span></h1>
-                <p class="hero-subtitle">Votre site professionnel, votre réservation et un interlocuteur passionné, disponible et basé en Bourgogne. Dès 59 €/mois.</p>
+                <h1><span class="hero-logo">⚡</span>JL Studio <span class="closing-tag">&lt;Web&gt;</span></h1>
+                <p class="hero-subtitle">Votre site vitrine sur mesure, pensé pour répondre aux attentes de votre activité.</p>
                 
                 <div class="hero-features">
                     <div class="feature-badge">🌐 Domaine et hébergement inclus</div>
@@ -1906,9 +1922,9 @@
                         <div class="stat-number">59 €</div>
                         <div class="stat-label">Dès / mois</div>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-number">99 €</div>
-                        <div class="stat-label">Création avec Accompagnement</div>
+                <div class="stat-item">
+                        <div class="stat-number">199 €</div>
+                        <div class="stat-label">Création dès, en une fois</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-number">3</div>
@@ -1992,8 +2008,8 @@
                         <div class="timeline-number">1</div>
                         <div class="timeline-content">
                             <div class="timeline-icon">📋</div>
-                            <h3>Brief & Consultation</h3>
-                            <p>Vous nous partagez votre vision, vos besoins et votre identité. Nous analysons et créons un plan d'action personnalisé.</p>
+                            <h3>Vous partagez votre projet</h3>
+                            <p>Vous remplissez gratuitement le questionnaire pour me présenter votre activité, vos services et vos préférences. Plus vous me donnez de détails, plus la maquette pourra vous ressembler.</p>
                         </div>
                     </div>
 
@@ -2001,8 +2017,8 @@
                         <div class="timeline-number">2</div>
                         <div class="timeline-content">
                             <div class="timeline-icon">🎨</div>
-                            <h3>Design & Développement </h3>
-                            <p>Nous concevons votre site vitrine à partir de vos contenus, avec un design adapté au mobile et les bases du référencement naturel.</p>
+                            <h3>Je prépare votre maquette</h3>
+                            <p>À partir de vos réponses, je réalise gratuitement une première maquette de votre site vitrine et vous l’envoie par e-mail, sans engagement ni paiement demandé.</p>
                         </div>
                     </div>
 
@@ -2010,8 +2026,8 @@
                         <div class="timeline-number">3</div>
                         <div class="timeline-content">
                             <div class="timeline-icon">🚀</div>
-                            <h3>Mise en ligne & Suivi</h3>
-                            <p>Après votre validation, nous mettons votre site en ligne sur votre domaine. Votre abonnement couvre l’hébergement et l’accompagnement prévus dans votre formule.</p>
+                            <h3>Vous choisissez la suite</h3>
+                            <p>Vous pouvez me demander quelques ajustements ou valider la formule qui vous convient. Je reprends ensuite contact avec vous pour vérifier que tout vous satisfait avant la mise en ligne.</p>
                         </div>
                     </div>
                 </div>
@@ -2053,7 +2069,7 @@
                         </div>
                     </div>
                     <div class="example-info">
-                        <h3>💎 Nabe · Artisane joaillière</h3>
+                        <h3>Nabe — artisane joaillière</h3>
                         <p>Une vitrine délicate pour les bijoux façonnés à la main et l’univers de la maison Nabe.</p>
                         <p style="margin-top: 10px; font-size: 0.9em; color: var(--accent-primary); font-weight: 600;">👉 Cliquez pour voir le site</p>
                     </div>
@@ -2066,7 +2082,7 @@
                         </div>
                     </div>
                     <div class="example-info">
-                        <h3>💇 Salon de coiffure · L’Instant Lumière</h3>
+                        <h3>Salon de coiffure — L’Instant Lumière</h3>
                         <p>Un univers lumineux qui présente le salon, ses prestations et la prise de rendez-vous.</p>
                         <p style="margin-top: 10px; font-size: 0.9em; color: var(--accent-primary); font-weight: 600;">👉 Cliquez pour voir le site</p>
                     </div>
@@ -2079,7 +2095,7 @@
                         </div>
                     </div>
                     <div class="example-info">
-                        <h3>🍽️ Restaurant · La Table d’Émilie</h3>
+                        <h3>Restaurant — La Table d’Émilie</h3>
                         <p>Une vitrine gourmande pour présenter la cuisine, le restaurant et les informations pratiques.</p>
                         <p style="margin-top: 10px; font-size: 0.9em; color: var(--accent-primary); font-weight: 600;">👉 Cliquez pour voir le site</p>
                     </div>
@@ -2093,7 +2109,7 @@
         <div class="offer-box">
             <h2>Votre site, pris en charge de A à Z</h2>
             <div class="price">Dès 59 €/mois</div>
-            <div class="price-subtitle">Création : 199 € avec Essentiel, 149 € avec Réservation ou 99 € avec Accompagnement, en une fois en plus de l’abonnement.</div>
+            <div class="price-subtitle">Création : 199 € TTC avec Essentiel, 149 € TTC avec Standard ou 99 € TTC avec Complète, en une fois en plus de l’abonnement.</div>
             <ul class="features-list">
                 <li>Un site vitrine professionnel adapté à votre activité</li>
                 <li>Nom de domaine standard, hébergement et HTTPS inclus</li>
@@ -2108,7 +2124,7 @@
     <div class="complementary-offers" id="abonnements">
         <div class="container">
             <h2 class="section-title">Trois formules pour votre activité</h2>
-            <p class="section-subtitle">Plus votre formule comprend d’accompagnement, plus vos frais de création diminuent. La création est facturée une seule fois, en plus de l’abonnement mensuel.</p>
+            <p class="section-subtitle">Tous les prix affichés sont TTC. Les frais de création sont réglés une seule fois, en plus de l’abonnement mensuel.</p>
             <div class="pricing-cards">
                 <div class="pricing-card">
                     <h3>Essentiel</h3>
@@ -2119,45 +2135,43 @@
                         <li>Domaine standard, hébergement et HTTPS</li>
                         <li>Services, photos et coordonnées</li>
                         <li>Lien vers votre outil de réservation existant</li>
-                        <li>Petites retouches : 15 minutes par trimestre</li>
-                        <li>Assistance par mail en jours ouvrés</li>
+                        <li>1 petite retouche par mois</li>
+                        <li>Assistance par e-mail sous 5 jours ouvrés</li>
                     </ul>
                     <a href="/questionnaire?formule=essentiel" class="cta-button">Choisir Essentiel</a>
                 </div>
                 <div class="pricing-card featured">
-                    <h3>Réservation</h3>
+                    <h3>Standard</h3>
                     <div class="pricing-price">89 €<span class="pricing-period">/mois</span></div>
                     <p><strong>+ 149 € de création, une seule fois</strong></p>
                     <ul class="pricing-features">
-                        <li>Un site vitrine jusqu’à quatre pages</li>
+                        <li>Un site vitrine jusqu’à 4 pages</li>
                         <li>Domaine standard, hébergement et HTTPS</li>
-                        <li>Intégration et configuration d’un outil de réservation compatible</li>
-                        <li>Petites retouches : 30 minutes par mois</li>
-                        <li>Bilan semestriel de votre site</li>
-                        <li>Assistance par mail en jours ouvrés</li>
+                        <li>Intégration d’un outil de réservation externe compatible</li>
+                        <li>3 petites retouches par mois</li>
+                        <li>Assistance par e-mail sous 1 jour ouvré</li>
                     </ul>
-                    <a href="/questionnaire?formule=reservation" class="cta-button">Choisir Réservation</a>
+                    <a href="/questionnaire?formule=standard" class="cta-button">Choisir Standard</a>
                 </div>
                 <div class="pricing-card">
-                    <h3>Accompagnement</h3>
+                    <h3>Complète</h3>
                     <div class="pricing-price">129 €<span class="pricing-period">/mois</span></div>
                     <p><strong>+ 99 € de création, une seule fois</strong></p>
                     <ul class="pricing-features">
-                        <li>Un site vitrine jusqu’à six pages</li>
+                        <li>Un site vitrine de 6 pages ou plus, selon votre projet</li>
                         <li>Domaine standard, hébergement et HTTPS</li>
-                        <li>Intégration et suivi d’un outil de réservation compatible</li>
-                        <li>Petites retouches : 60 minutes par mois</li>
-                        <li>Bilan trimestriel et recommandations</li>
-                        <li>Assistance par mail en jours ouvrés</li>
+                        <li>Intégration d’un outil de réservation externe compatible</li>
+                        <li>4 petites retouches par mois, davantage selon vos besoins</li>
+                        <li>Assistance par e-mail sous 1 jour ouvré</li>
                     </ul>
-                    <a href="/questionnaire?formule=accompagnement" class="cta-button">Choisir Accompagnement</a>
+                    <a href="/questionnaire?formule=complete" class="cta-button">Choisir Complète</a>
                 </div>
             </div>
             <div class="offer-terms">
                 <h3>Ce qu’il faut savoir</h3>
-                <p>Sites vitrine uniquement : aucune boutique en ligne. Les abonnements et frais éventuels de Planity ou de tout autre logiciel de réservation restent à votre charge. L’intégration dépend de la compatibilité et des options activées sur votre compte.</p>
-                <p>Les retouches concernent les textes et photos existants. Le temps inclus n’est pas reportable. Les nouvelles pages, refontes et demandes hors forfait font l’objet d’un devis. Les domaines premium et la messagerie professionnelle ne sont pas inclus.</p>
-                <p>Les tarifs affichés s’entendent hors taxes si la TVA est applicable. Le régime de TVA, le montant total à régler, la durée de l’abonnement, les conditions de résiliation et le délai de réalisation sont précisés dans votre devis avant tout accord. L’envoi du formulaire ne déclenche aucun paiement ni abonnement.</p>
+                <p>Je crée uniquement des sites vitrines : ils présentent votre entreprise, vos prestations et vos produits, mais ne permettent pas de vendre ou d’encaisser des commandes en ligne. Un bouton ou lien vers votre outil de réservation externe peut être intégré ; son abonnement reste à votre charge.</p>
+                <p>Une petite retouche correspond à une demande simple sur le site existant, comme corriger un texte, remplacer une photo ou changer une couleur. Une refonte, une nouvelle fonctionnalité ou des pages au-delà de la formule demandée peuvent nécessiter un devis. Les quotas indiqués sont mensuels et ne sont pas reportables.</p>
+                <p>Les tarifs indiqués sont TTC et comprennent la création au montant affiché ainsi que l’abonnement mensuel correspondant. Les conditions de durée, de résiliation, les éventuels frais liés aux domaines premium et à la messagerie professionnelle seront précisés avant tout accord. Le formulaire est gratuit, sans engagement et ne déclenche aucun paiement.</p>
             </div>
         </div>
     </div>
