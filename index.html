@@ -237,22 +237,78 @@
         }
 
         .theme-toggle {
-            background: var(--card-bg);
-            border: 2px solid var(--border-color);
-            border-radius: 50px;
-            padding: 10px 18px;
+            position: fixed;
+            right: 24px;
+            bottom: 24px;
+            z-index: 100001;
+            width: 54px;
+            height: 50px;
+            display: grid;
+            place-items: center;
+            background: #1c1b1f;
+            color: #ffbd2e;
+            border: 2px solid #a58d12;
+            border-radius: 12px;
+            padding: 0;
             cursor: pointer;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
+            box-shadow: 0 4px 14px rgba(0,0,0,.22);
+            transition: transform .2s ease, background .2s ease, border-color .2s ease;
         }
 
         .theme-toggle:hover {
-            transform: scale(1.1) rotate(15deg);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            transform: translateY(-2px);
         }
 
         .theme-icon {
-            font-size: 1.3em;
+            font-size: 1.6em;
+            line-height: 1;
+        }
+
+        body:not(.dark-mode) .theme-toggle {
+            background: #e8e5ff;
+            color: #e4aa27;
+            border-color: #aaa0ff;
+            box-shadow: 0 4px 14px rgba(94,79,171,.18);
+        }
+
+        @media (max-width: 480px) {
+            .theme-toggle { right: 16px; bottom: 16px; }
+        }
+
+        /* Écran d’accueil sobre : le reste de la landing garde son style. */
+        .loader-wrapper {
+            background: linear-gradient(145deg, #faf9f6 0%, #f0eefb 65%, #faeff1 100%);
+            color: #292536;
+        }
+
+        .loader-matrix { display: none; }
+
+        .loader-card {
+            width: min(90%, 440px);
+            padding: 38px 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 9px;
+            background: rgba(255,255,255,.92);
+            border: 1px solid rgba(100,80,130,.12);
+            border-radius: 22px;
+            box-shadow: 0 22px 65px rgba(54,42,71,.12);
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .loader-mark { color: #e9aa3e; font-size: 2rem; line-height: 1; }
+        .loader-brand { color: #302b3e; font-size: 1.35rem; font-weight: 750; }
+        .loader-message { color: #726d7d; font-size: .96rem; }
+        .loader-progress { width: min(100%, 220px); height: 4px; margin-top: 16px; overflow: hidden; border-radius: 9px; background: #eeeaf4; }
+        .loader-progress span { display: block; width: 42%; height: 100%; border-radius: inherit; background: linear-gradient(90deg,#846fd0,#d29baa); animation: loaderProgress 1.8s ease-in-out infinite; }
+        @keyframes loaderProgress { from { transform: translateX(-110%); } to { transform: translateX(250%); } }
+        .skip-hint { color: #777181; font-family: inherit; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .loader-progress span { animation: none; width: 100%; }
         }
 
         /* Particles flottantes */
@@ -1783,32 +1839,26 @@
         .customer-preview h4 { font-size: clamp(1.7em,5vw,2.7em); line-height: 1.1; margin: 12px 0; }
         #previewServices { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
         #previewServices span { padding: 8px 12px; border-radius: 30px; background: white; }
+        .example-image { aspect-ratio: 16 / 10; height: auto; }
+        .example-mockup { inset: 0; width: 100%; height: 100%; padding: 0; transform: none; border-radius: 0; box-shadow: none; }
+        .example-card:hover .example-mockup { transform: none; }
+        .example-mockup img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
     </style>	
 </head>
 <body class="loader-active">
     <!-- Canvas pour effet Matrix -->
     <canvas class="matrix-bg" id="matrixCanvas"></canvas>
 
-    <!-- Loader avec effet terminal -->
+    <!-- Accueil avant affichage de la landing -->
     <div class="loader-wrapper" id="loader">
         <canvas class="loader-matrix" id="loaderMatrix"></canvas>
-        <div class="terminal-window">
-            <div class="terminal-header">
-                <div class="terminal-dot"></div>
-                <div class="terminal-dot"></div>
-                <div class="terminal-dot"></div>
-                <span class="terminal-title">bash - JL Studio Web</span>
-            </div>
-            <div class="terminal-content">
-                <div class="terminal-line"><span class="terminal-prompt">$</span> npm install jl-studio-web</div>
-                <div class="terminal-line">⚡ Initializing project...</div>
-                <div class="terminal-line">📦 Loading modules...</div>
-                <div class="terminal-line">🎨 Compiling assets...</div>
-                <div class="terminal-line">✅ Build complete!</div>
-                <div class="terminal-line"><span class="terminal-success">🚀 Ready to deploy</span><span class="terminal-cursor"></span></div>
-            </div>
+        <div class="loader-card" role="status" aria-live="polite">
+            <span class="loader-mark" aria-hidden="true">⚡</span>
+            <p class="loader-brand">JL Studio</p>
+            <p class="loader-message">Des sites vitrines pensés à Dijon, pour vous.</p>
+            <div class="loader-progress" aria-hidden="true"><span></span></div>
         </div>
-        <div class="skip-hint">// Cliquez pour continuer</div>
+        <div class="skip-hint">Cliquez pour continuer</div>
     </div>
 
     <!-- Particles flottantes -->
@@ -1827,25 +1877,26 @@
     <div class="floating-nav">
         <a href="#offre" class="nav-item">🎯 Offres</a>
         <a href="/questionnaire" class="nav-item">📋 Votre projet</a>
-        <div class="theme-toggle" id="themeToggle">
-            <span class="theme-icon" id="themeIcon">🌙</span>
-        </div>
     </div>
 
     <!-- Scroll to top -->
     <div class="scroll-top" id="scrollTop">↑</div>
+
+    <button type="button" class="theme-toggle" id="themeToggle" aria-label="Activer le thème sombre" aria-pressed="false">
+        <span class="theme-icon" id="themeIcon" aria-hidden="true">🌙</span>
+    </button>
 
     <!-- Hero Section -->
     <div class="hero">
         <div class="hero-content">
             <div class="hero-text">
                 <h1><span class="hero-logo">⚡</span>JL Studio <span class="closing-tag">&lt;/Web&gt;</span></h1>
-                <p class="hero-subtitle">Votre site professionnel, votre réservation et un interlocuteur qui s’occupe de tout. Dès 59 €/mois.</p>
+                <p class="hero-subtitle">Votre site professionnel, votre réservation et un interlocuteur passionné, disponible et basé en Bourgogne. Dès 59 €/mois.</p>
                 
                 <div class="hero-features">
                     <div class="feature-badge">🌐 Domaine et hébergement inclus</div>
                     <div class="feature-badge">💎 Design Premium</div>
-                    <div class="feature-badge">🤝 Accompagnement humain</div>
+                    <div class="feature-badge">🤝 Créateur dijonnais à votre écoute</div>
                 </div>
 
                 <a href="#offre" class="cta-button">⚡ Démarrer mon projet</a>
@@ -1980,8 +2031,8 @@
                 <div class="trust-label">Domaine et hébergement inclus</div>
             </div>
             <div class="trust-stat">
-                <div class="trust-number">À vos côtés</div>
-                <div class="trust-label">Assistance par mail en jours ouvrés</div>
+                <div class="trust-number">En Bourgogne</div>
+                <div class="trust-label">Un créateur passionné, joignable en direct</div>
             </div>
         </div>
     </div>
@@ -1995,25 +2046,15 @@
             </p>
 
             <div class="examples-grid">
-                <div class="example-card" onclick="window.open('https://romeji.github.io/Immotransaction/', '_blank')">
+                <div class="example-card" onclick="window.open('https://nabe-lyart.vercel.app/', '_blank')">
                     <div class="example-image">
                         <div class="example-mockup">
-                            <div class="mockup-header">
-                                <div class="mockup-dot"></div>
-                                <div class="mockup-dot"></div>
-                                <div class="mockup-dot"></div>
-                            </div>
-                            <div class="mockup-content">
-                                <div class="mockup-line"></div>
-                                <div class="mockup-line short"></div>
-                                <div class="mockup-line"></div>
-                                <div class="mockup-line"></div>
-                            </div>
+                            <img src="assets/portfolio/nabe.png" alt="Aperçu du site Nabe, maison de joaillerie artisanale" loading="lazy" decoding="async">
                         </div>
                     </div>
                     <div class="example-info">
-                        <h3>🏠 Agence Immobilière</h3>
-                        <p>Site élégant présentant les biens, services et expertise de l'agence avec galerie photos intégrée.</p>
+                        <h3>💎 Nabe · Artisane joaillière</h3>
+                        <p>Une vitrine délicate pour les bijoux façonnés à la main et l’univers de la maison Nabe.</p>
                         <p style="margin-top: 10px; font-size: 0.9em; color: var(--accent-primary); font-weight: 600;">👉 Cliquez pour voir le site</p>
                     </div>
                 </div>
@@ -2021,22 +2062,12 @@
                 <div class="example-card" onclick="window.open('https://romeji.github.io/L-Instant-Lumi-re/', '_blank')">
                     <div class="example-image">
                         <div class="example-mockup">
-                            <div class="mockup-header">
-                                <div class="mockup-dot"></div>
-                                <div class="mockup-dot"></div>
-                                <div class="mockup-dot"></div>
-                            </div>
-                            <div class="mockup-content">
-                                <div class="mockup-line"></div>
-                                <div class="mockup-line short"></div>
-                                <div class="mockup-line"></div>
-                                <div class="mockup-line"></div>
-                            </div>
+                            <img src="assets/portfolio/instant-lumiere.png" alt="Aperçu du site du salon L’Instant Lumière" loading="lazy" decoding="async">
                         </div>
                     </div>
                     <div class="example-info">
-                        <h3>💇 Salon de Coiffure</h3>
-                        <p>Design moderne et lumineux mettant en valeur les services, tarifs et l'ambiance du salon de coiffure.</p>
+                        <h3>💇 Salon de coiffure · L’Instant Lumière</h3>
+                        <p>Un univers lumineux qui présente le salon, ses prestations et la prise de rendez-vous.</p>
                         <p style="margin-top: 10px; font-size: 0.9em; color: var(--accent-primary); font-weight: 600;">👉 Cliquez pour voir le site</p>
                     </div>
                 </div>
@@ -2044,22 +2075,12 @@
                 <div class="example-card" onclick="window.open('https://romeji.github.io/LaTableDemilie/', '_blank')">
                     <div class="example-image">
                         <div class="example-mockup">
-                            <div class="mockup-header">
-                                <div class="mockup-dot"></div>
-                                <div class="mockup-dot"></div>
-                                <div class="mockup-dot"></div>
-                            </div>
-                            <div class="mockup-content">
-                                <div class="mockup-line"></div>
-                                <div class="mockup-line short"></div>
-                                <div class="mockup-line"></div>
-                                <div class="mockup-line"></div>
-                            </div>
+                            <img src="assets/portfolio/table-emilie.png" alt="Aperçu du site du restaurant La Table d’Émilie" loading="lazy" decoding="async">
                         </div>
                     </div>
                     <div class="example-info">
-                        <h3>🍽️ Restaurant</h3>
-                        <p>Site gourmand présentant le menu, l'ambiance et les informations pratiques du restaurant.</p>
+                        <h3>🍽️ Restaurant · La Table d’Émilie</h3>
+                        <p>Une vitrine gourmande pour présenter la cuisine, le restaurant et les informations pratiques.</p>
                         <p style="margin-top: 10px; font-size: 0.9em; color: var(--accent-primary); font-weight: 600;">👉 Cliquez pour voir le site</p>
                     </div>
                 </div>
@@ -2156,6 +2177,7 @@
     <footer>
         <h3>⚡ JL Studio <span class="closing-tag">&lt;/Web&gt;</span></h3>
         <p>Sites vitrine par abonnement • Dès 59 €/mois + 199 € de création</p>
+        <p>Créé avec passion à Dijon, au cœur de la Bourgogne.</p>
         <p style="margin-top: 20px; opacity: 0.6;">© 2026 JL Studio Web. Tous droits réservés.</p>
     </footer>
 
@@ -2252,7 +2274,9 @@
         
         themeToggle.addEventListener('click', () => {
             const isDark = document.body.classList.toggle('dark-mode');
-            themeIcon.textContent = isDark ? '☀️' : '🌙';
+            themeIcon.textContent = isDark ? '⚡' : '🌙';
+            themeToggle.setAttribute('aria-pressed', String(isDark));
+            themeToggle.setAttribute('aria-label', isDark ? 'Activer le thème clair' : 'Activer le thème sombre');
         });
 
         // Compteurs animés
