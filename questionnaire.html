@@ -26,6 +26,11 @@
     .maker-copy p { color:#62677a; margin:0; }
     .maker-signoff { margin-top:9px!important; color:#776aa0!important; font-size:.88rem; font-weight:650; }
     .card { background:white; border:1px solid var(--line); border-radius:24px; padding:clamp(22px,5vw,44px); box-shadow:0 18px 55px #2529530b; }
+    .welcome-card { margin-bottom:22px; }
+    .welcome-card h2 { margin:8px 0 12px; font-size:clamp(1.45rem,4vw,1.9rem); line-height:1.2; letter-spacing:-.025em; }
+    .welcome-card p { color:var(--muted); margin:0 0 14px; }
+    .welcome-card .fine { margin-bottom:22px; }
+    .welcome-card .primary { display:block; margin:0 auto; }
     .progress-row { display:flex; justify-content:space-between; color:var(--muted); font-size:.9rem; font-weight:650; }
     .track { height:7px; background:#eeedf5; border-radius:20px; overflow:hidden; margin:12px 0 30px; }
     .bar { height:100%; width:25%; border-radius:inherit; background:linear-gradient(90deg,#7466df,#a26bc5); transition:width .25s; }
@@ -60,7 +65,15 @@
   <main>
     <div class="intro"><span class="eyebrow">Créateur local · Dijon, Bourgogne</span><h1>Parlons de votre activité</h1><p>Quelques questions pour mieux vous connaître et imaginer un premier aperçu qui vous ressemble. Ensuite, nous pourrons l’adapter ensemble.</p></div>
     <aside class="maker-note" aria-label="Un mot du créateur de JL Studio"><div class="maker-mark" aria-hidden="true">⚡</div><div class="maker-copy"><strong>Un mot du créateur</strong><p>Bonjour et bienvenue ! JL Studio, c’est ma jeune entreprise dijonnaise, portée par ma passion du web et le goût du travail bien fait. Je lirai votre brief moi-même et resterai votre interlocuteur pour préparer le premier aperçu, puis l’améliorer avec vous. Vous pouvez aussi me joindre par mail, téléphone ou Instagram. En choisissant un créateur local, vous faites grandir une entreprise bourguignonne : merci pour votre confiance.</p><p class="maker-signoff">📍 Dijon, au cœur de la Bourgogne · Un échange direct, du début à la suite.</p></div></aside>
-    <section class="card" id="formCard">
+    <section class="card welcome-card" id="welcomeCard" aria-labelledby="welcomeTitle">
+      <span class="eyebrow">Avant de commencer</span>
+      <h2 id="welcomeTitle">Un premier aperçu qui vous ressemble</h2>
+      <p>Prenez le temps de compléter chaque étape. Plus vous me donnez de détails sur votre activité et vos préférences, plus je pourrai créer un site vitrine adapté à vos attentes.</p>
+      <p>Après l’envoi du questionnaire, je préparerai votre premier aperçu et vous adresserai un lien par e-mail pour le découvrir. Vous pourrez alors confirmer la formule qui vous convient. Si vous souhaitez des ajustements, nous pourrons faire évoluer le site ensemble : il vous suffira de me répondre par e-mail.</p>
+      <p class="fine">La formule indiquée dans le questionnaire est une préférence, sans engagement et sans paiement à cette étape.</p>
+      <button class="primary" id="startFormButton" type="button">Commencer le formulaire</button>
+    </section>
+    <section class="card" id="formCard" hidden>
       <div class="progress-row"><span id="stepLabel">Étape 1 sur 4</span><span>Environ 5 minutes</span></div>
       <div class="track" aria-hidden="true"><div class="bar" id="progressBar"></div></div>
       <form id="briefForm">
@@ -102,6 +115,14 @@
   <script>
     (() => {
       const form = document.getElementById('briefForm');
+      const welcome = document.getElementById('welcomeCard');
+      const formCard = document.getElementById('formCard');
+      document.getElementById('startFormButton').addEventListener('click', () => {
+        welcome.hidden = true;
+        formCard.hidden = false;
+        formCard.scrollIntoView({behavior:'smooth',block:'start'});
+        form.querySelector('input,select,textarea')?.focus({preventScroll:true});
+      });
       const steps = [...form.querySelectorAll('fieldset')];
       const label = document.getElementById('stepLabel');
       const bar = document.getElementById('progressBar');
