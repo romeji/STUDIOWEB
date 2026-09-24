@@ -19,6 +19,12 @@
             --success: #28ca42;
         }
 
+        body:not(.dark-mode) {
+            --accent-primary: #51428f;
+            --accent-secondary: #7b4d87;
+            --bg-secondary: #f0eef8;
+        }
+
         .dark-mode {
             --bg-primary: #0a0a0a;
             --bg-secondary: #141414;
@@ -265,47 +271,102 @@
         }
 
         body:not(.dark-mode) .theme-toggle {
-            background: #e8e5ff;
+            background: #e1ddf8;
             color: #e4aa27;
-            border-color: #aaa0ff;
-            box-shadow: 0 4px 14px rgba(94,79,171,.18);
+            border-color: #7869c8;
+            box-shadow: 0 4px 14px rgba(74,60,137,.24);
         }
 
         @media (max-width: 480px) {
             .theme-toggle { right: 16px; bottom: 16px; }
         }
 
-        /* Écran d’accueil sobre : le reste de la landing garde son style. */
+        /* Écran d’accueil inspiré de la page JL Tech Info. */
         .loader-wrapper {
-            background: linear-gradient(145deg, #faf9f6 0%, #f0eefb 65%, #faeff1 100%);
-            color: #292536;
+            isolation: isolate;
+            background:
+                radial-gradient(ellipse at 50% 25%, rgba(49,87,160,.3), transparent 38%),
+                linear-gradient(135deg, #0b1027 0%, #111a3b 54%, #171233 100%);
+            color: #f5f4ff;
+        }
+
+        .loader-wrapper::before,
+        .loader-wrapper::after {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .loader-wrapper::before {
+            inset: 0 auto auto 0;
+            width: min(48vw, 620px);
+            height: 52vh;
+            background: linear-gradient(135deg, rgba(80,37,155,.38), rgba(18,118,161,.12));
+            clip-path: polygon(0 0, 100% 0, 84% 44%, 58% 57%, 32% 100%, 0 72%);
+        }
+
+        .loader-wrapper::after {
+            inset: auto 0 0 auto;
+            width: min(54vw, 700px);
+            height: 55vh;
+            background: linear-gradient(135deg, rgba(27,90,143,.22), rgba(145,34,151,.2));
+            clip-path: polygon(45% 0, 100% 22%, 100% 100%, 0 100%, 26% 60%);
         }
 
         .loader-matrix { display: none; }
 
         .loader-card {
-            width: min(90%, 440px);
-            padding: 38px 32px;
+            width: min(92%, 900px);
+            padding: clamp(22px, 5vw, 48px);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 9px;
-            background: rgba(255,255,255,.92);
-            border: 1px solid rgba(100,80,130,.12);
+            gap: 13px;
+            background: transparent;
+            border: 0;
             border-radius: 22px;
-            box-shadow: 0 22px 65px rgba(54,42,71,.12);
+            box-shadow: none;
             text-align: center;
             position: relative;
             z-index: 1;
         }
 
-        .loader-mark { color: #e9aa3e; font-size: 2rem; line-height: 1; }
-        .loader-brand { color: #302b3e; font-size: 1.35rem; font-weight: 750; }
-        .loader-message { color: #726d7d; font-size: .96rem; }
-        .loader-progress { width: min(100%, 220px); height: 4px; margin-top: 16px; overflow: hidden; border-radius: 9px; background: #eeeaf4; }
-        .loader-progress span { display: block; width: 42%; height: 100%; border-radius: inherit; background: linear-gradient(90deg,#846fd0,#d29baa); animation: loaderProgress 1.8s ease-in-out infinite; }
+        .loader-mark {
+            position: relative;
+            display: grid;
+            place-items: center;
+            width: 76px;
+            height: 76px;
+            margin-bottom: 8px;
+            border: 3px solid transparent;
+            border-radius: 50%;
+            background: linear-gradient(#141b38,#141b38) padding-box, linear-gradient(135deg,#16a5ff,#6b4bff,#e12aa7) border-box;
+            color: #ffc249;
+            font-size: 2rem;
+            line-height: 1;
+            box-shadow: 0 0 32px rgba(67,105,255,.24);
+        }
+        .loader-portrait { display: block; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; object-position: center 35%; }
+        .loader-brand {
+            margin: 0;
+            background: linear-gradient(95deg,#28b4ff 3%,#7551f6 54%,#e42eab 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-size: clamp(2.7rem, 8vw, 5.2rem);
+            line-height: 1.06;
+            letter-spacing: -.045em;
+            font-weight: 850;
+        }
+        .loader-brand span { white-space: nowrap; }
+        .loader-eyebrow { color: #a8b5dc; font-size: .83rem; font-weight: 750; text-transform: uppercase; letter-spacing: .17em; }
+        .loader-message { max-width: 690px; margin: 4px 0 0; color: #f2f1fa; font-size: clamp(1.25rem, 3.4vw, 2rem); font-weight: 650; line-height: 1.35; }
+        .loader-note { max-width: 580px; margin: 0; color: #b8c0d8; font-size: 1rem; }
+        .loader-progress { width: min(100%, 220px); height: 4px; margin-top: 18px; overflow: hidden; border-radius: 9px; background: rgba(232,235,255,.16); }
+        .loader-progress span { display: block; width: 42%; height: 100%; border-radius: inherit; background: linear-gradient(90deg,#21aaff,#8b50ed,#ed399a); animation: loaderProgress 1.8s ease-in-out infinite; }
         @keyframes loaderProgress { from { transform: translateX(-110%); } to { transform: translateX(250%); } }
-        .skip-hint { color: #777181; font-family: inherit; }
+        .skip-hint { color: rgba(226,231,248,.68); font-family: inherit; }
 
         @media (prefers-reduced-motion: reduce) {
             .loader-progress span { animation: none; width: 100%; }
@@ -368,20 +429,45 @@
         }
 
         body:not(.dark-mode) .hero {
-            background: linear-gradient(135deg, #fff8ef 0%, #edf3ff 55%, #f7efff 100%);
+            background: linear-gradient(135deg, #e9e5f3 0%, #d8e2f0 55%, #eaddf0 100%);
             color: #202139;
         }
 
         body:not(.dark-mode) .hero::before {
             background:
-                radial-gradient(circle at 18% 48%, rgba(255, 255, 255, 0.9) 0%, transparent 46%),
-                radial-gradient(circle at 82% 76%, rgba(102, 126, 234, 0.10) 0%, transparent 48%);
+                radial-gradient(circle at 18% 48%, rgba(255, 255, 255, 0.56) 0%, transparent 46%),
+                radial-gradient(circle at 82% 76%, rgba(81, 66, 143, 0.13) 0%, transparent 48%);
         }
 
-        body:not(.dark-mode) .hero .hero-subtitle { color: #53596e; }
-        body:not(.dark-mode) .hero .feature-badge,
-        body:not(.dark-mode) .hero .stat-item { color: #292b40; }
-        body:not(.dark-mode) .hero .stat-item { background: rgba(255,255,255,.64); border-color: rgba(73,82,123,.12); }
+        body:not(.dark-mode) .hero .hero-subtitle { color: #43465a; }
+        body:not(.dark-mode) .hero .feature-badge { color: #29263c; background: rgba(250,248,255,.5); border-color: rgba(69,55,117,.35); box-shadow: 0 4px 14px rgba(49,40,85,.08); }
+        body:not(.dark-mode) .hero .feature-badge:hover { background: rgba(255,255,255,.78); border-color: rgba(69,55,117,.55); }
+        body:not(.dark-mode) .hero .stat-item { color: #292b40; background: transparent; border-color: transparent; box-shadow: none; }
+        body:not(.dark-mode) .hero .stat-number { color: #51428f; text-shadow: none; }
+        body:not(.dark-mode) .hero .stat-label { color: #424459; opacity: 1; }
+        body:not(.dark-mode) .hero .cta-button { color: #45387f; border: 1px solid rgba(69,55,117,.32); box-shadow: 0 8px 24px rgba(49,40,85,.16); }
+
+        body:not(.dark-mode) .trust-section,
+        body:not(.dark-mode) .offer-highlight,
+        body:not(.dark-mode) .contact-section {
+            background: linear-gradient(135deg, #ded9ef 0%, #e8e3f2 52%, #d8e2f0 100%);
+            color: #29263c;
+        }
+
+        body:not(.dark-mode) .trust-section::before,
+        body:not(.dark-mode) .offer-highlight::before {
+            background: radial-gradient(circle, rgba(255,255,255,.58) 0%, transparent 70%);
+        }
+
+        body:not(.dark-mode) .trust-number { text-shadow: none; }
+        body:not(.dark-mode) .trust-label { color: #4e4b61; opacity: 1; }
+        body:not(.dark-mode) .offer-box { box-shadow: 0 24px 60px rgba(56,46,93,.16); }
+        body:not(.dark-mode) .offer-box h2 { color: #51428f; }
+        body:not(.dark-mode) .price { background-image: linear-gradient(135deg,#51428f 0%,#7b4d87 100%); }
+        body:not(.dark-mode) .pricing-card.featured { background: linear-gradient(145deg,#e9e4f5 0%,#f0e6f1 100%); }
+        body:not(.dark-mode) .pricing-card.featured::before { background: linear-gradient(135deg,#51428f 0%,#7b4d87 100%); }
+        body:not(.dark-mode) .complementary-badge { background: linear-gradient(135deg,#e7e2f5 0%,#eee3f0 100%); border-color: #7869ad; }
+        body:not(.dark-mode) .contact-container { box-shadow: 0 24px 60px rgba(56,46,93,.16); }
 
         .hero::before {
             content: '';
@@ -423,6 +509,8 @@
             animation: fadeInLeft 1s ease;
             flex-wrap: wrap;
         }
+
+        .hero-text h1 .closing-tag { font-size: .7em; white-space: nowrap; }
 
         .hero-logo {
             font-size: 1em;
@@ -1869,9 +1957,11 @@
     <div class="loader-wrapper" id="loader">
         <canvas class="loader-matrix" id="loaderMatrix"></canvas>
         <div class="loader-card" role="status" aria-live="polite">
-            <span class="loader-mark" aria-hidden="true">⚡</span>
-            <p class="loader-brand">JL Studio</p>
-            <p class="loader-message">Des sites vitrines pensés à Dijon, pour vous.</p>
+            <span class="loader-mark" aria-hidden="true"><img class="loader-portrait" src="https://romeji.github.io/JL.INFO/photo.jpg" alt="" fetchpriority="high"></span>
+            <p class="loader-eyebrow">Création web à Dijon · Bourgogne</p>
+            <p class="loader-brand">JL Studio <span>&lt;Web&gt;</span></p>
+            <p class="loader-message">Votre site vitrine sur mesure, pensé pour répondre à vos attentes.</p>
+            <p class="loader-note">Un accompagnement de proximité, de la première maquette à la mise en ligne.</p>
             <div class="loader-progress" aria-hidden="true"><span></span></div>
         </div>
         <div class="skip-hint">Cliquez pour continuer</div>
@@ -2161,7 +2251,7 @@
                         <li>Un site vitrine de 6 pages ou plus, selon votre projet</li>
                         <li>Domaine standard, hébergement et HTTPS</li>
                         <li>Intégration d’un outil de réservation externe compatible</li>
-                        <li>4 petites retouches par mois, davantage selon vos besoins</li>
+                        <li>5 petites retouches par mois</li>
                         <li>Assistance par e-mail sous 1 jour ouvré</li>
                     </ul>
                     <a href="/questionnaire?formule=complete" class="cta-button">Choisir Complète</a>
@@ -2171,6 +2261,8 @@
                 <h3>Ce qu’il faut savoir</h3>
                 <p>Je crée uniquement des sites vitrines : ils présentent votre entreprise, vos prestations et vos produits, mais ne permettent pas de vendre ou d’encaisser des commandes en ligne. Un bouton ou lien vers votre outil de réservation externe peut être intégré ; son abonnement reste à votre charge.</p>
                 <p>Une petite retouche correspond à une demande simple sur le site existant, comme corriger un texte, remplacer une photo ou changer une couleur. Une refonte, une nouvelle fonctionnalité ou des pages au-delà de la formule demandée peuvent nécessiter un devis. Les quotas indiqués sont mensuels et ne sont pas reportables.</p>
+                <p>Le nom de domaine est l’adresse de votre site, par exemple <em>mon-entreprise.fr</em>. Nous choisissons ensemble une adresse disponible au moment de la mise en place ; si votre premier choix est déjà pris, nous cherchons une autre possibilité. Un nom de domaine standard est inclus dans l’abonnement ; une extension ou un nom premium peut entraîner un supplément.</p>
+                <p>L’hébergement, c’est l’espace sur un serveur où sont stockés les fichiers de votre site pour qu’il reste accessible sur Internet. Il est inclus dans l’abonnement, avec le certificat HTTPS.</p>
                 <p>Les tarifs indiqués sont TTC et comprennent la création au montant affiché ainsi que l’abonnement mensuel correspondant. Les conditions de durée, de résiliation, les éventuels frais liés aux domaines premium et à la messagerie professionnelle seront précisés avant tout accord. Le formulaire est gratuit, sans engagement et ne déclenche aucun paiement.</p>
             </div>
         </div>
