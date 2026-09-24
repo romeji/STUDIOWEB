@@ -908,6 +908,13 @@
         .example-info .example-link span { margin-left: 5px; }
         .hero-kicker { text-transform: uppercase; letter-spacing: .13em; font-weight: 750; font-size: .82rem; color: #66559e; margin-bottom: 10px; }
         .hero-reassurance { font-size: .9rem; color: #746f7e; margin-top: 12px; }
+        .local-note { max-width: 1120px; margin: 0 auto; padding: 26px 28px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 18px; background: #fff; border: 1px solid #eee8f1; border-radius: 20px; box-shadow: 0 12px 32px rgba(48,35,59,.055); transform: translateY(-20px); position: relative; z-index: 3; }
+        .local-note-mark { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 15px; background: #fbf2e5; color: #d99b36; font-size: 1.45rem; }
+        .local-note-copy strong { display: block; margin-bottom: 4px; color: #54467a; font-size: 1.02rem; }
+        .local-note-copy p { color: #686477; line-height: 1.55; }
+        .local-note-aside { padding-left: 18px; border-left: 1px solid #ede8f0; color: #706b7a; font-size: .9rem; line-height: 1.55; }
+        .local-note-aside strong { color: #54467a; }
+        @media (max-width: 700px) { .local-note { margin: 0 16px; padding: 20px; grid-template-columns: auto 1fr; transform: translateY(-8px); gap: 12px; } .local-note-aside { grid-column: 1/-1; border-left: 0; border-top: 1px solid #ede8f0; padding: 12px 0 0; } }
         .preview-browserbar { height: 36px; display: flex; align-items: center; gap: 6px; padding: 0 12px; border-bottom: 1px solid #f0edf4; }
         .preview-browserbar span { width: 9px; height: 9px; border-radius: 50%; background: #e9c4c8; }
         .preview-browserbar span:nth-child(2) { background: #f1d79a; }
@@ -1690,14 +1697,14 @@
     <section class="hero">
         <div class="hero-content">
             <div class="hero-text">
-                <p class="hero-kicker">Création de sites vitrines · Dijon & alentours</p>
+                <p class="hero-kicker">Création de sites vitrines · Dijon & Bourgogne</p>
                 <h1><span class="hero-logo" aria-hidden="true">⚡</span> JL Studio <span class="closing-tag">Des sites pensés pour vous.</span></h1>
-                <p class="hero-subtitle">Un site professionnel à votre image, avec réservation en ligne si vous le souhaitez. Je m’occupe du reste, simplement.</p>
+                <p class="hero-subtitle">Je crée un site professionnel à l’image de votre activité et reste votre contact direct, du premier échange aux ajustements.</p>
                 
                 <div class="hero-features">
                     <div class="feature-badge">🌐 Domaine et hébergement inclus</div>
                     <div class="feature-badge">✦ Un design sur mesure</div>
-                    <div class="feature-badge">🤝 Un interlocuteur dédié</div>
+                    <div class="feature-badge">🤝 Vous échangez directement avec moi</div>
                 </div>
 
                 <a href="/questionnaire" class="cta-button">Parler de mon projet <span aria-hidden="true">↗</span></a>
@@ -1730,6 +1737,15 @@
                 </div>
             </div>
         </div>
+    </section>
+
+    <section class="local-note" aria-label="Une jeune entreprise bourguignonne à votre écoute">
+        <div class="local-note-mark" aria-hidden="true">⚡</div>
+        <div class="local-note-copy">
+            <strong>Une jeune entreprise bourguignonne, à taille humaine</strong>
+            <p>JL Studio est né à Dijon d’une passion pour le web et le travail bien fait. En me confiant votre projet, vous échangez directement avec moi et faites grandir une entreprise locale.</p>
+        </div>
+        <div class="local-note-aside"><strong>Je reste joignable</strong><br>Par mail, téléphone ou Instagram, selon ce qui vous convient.</div>
     </section>
 
     <!-- Section C'est quoi -->
@@ -1784,7 +1800,7 @@
                         <div class="timeline-content">
                             <div class="timeline-icon">📋</div>
                             <h3>Brief & Consultation</h3>
-                            <p>Vous nous partagez votre vision, vos besoins et votre identité. Nous analysons et créons un plan d'action personnalisé.</p>
+                            <p>Vous me partagez votre vision, vos besoins et votre identité. J’étudie votre activité et prépare une première direction adaptée.</p>
                         </div>
                     </div>
 
@@ -1793,7 +1809,7 @@
                         <div class="timeline-content">
                             <div class="timeline-icon">🎨</div>
                             <h3>Design & Développement </h3>
-                            <p>Nous concevons votre site vitrine à partir de vos contenus, avec un design adapté au mobile et les bases du référencement naturel.</p>
+                            <p>Je conçois votre site vitrine à partir de vos contenus, avec un design adapté au mobile et les bases du référencement naturel.</p>
                         </div>
                     </div>
 
@@ -1802,7 +1818,7 @@
                         <div class="timeline-content">
                             <div class="timeline-icon">🚀</div>
                             <h3>Mise en ligne & Suivi</h3>
-                            <p>Après votre validation, nous mettons votre site en ligne sur votre domaine. Votre abonnement couvre l’hébergement et l’accompagnement prévus dans votre formule.</p>
+                            <p>Après votre validation, je mets votre site en ligne sur votre domaine. Votre abonnement couvre l’hébergement et l’accompagnement prévus dans votre formule.</p>
                         </div>
                     </div>
                 </div>
@@ -1818,12 +1834,12 @@
                 <div class="trust-label">Abonnement dès</div>
             </div>
             <div class="trust-stat">
-                <div class="trust-number">Clé en main</div>
-                <div class="trust-label">Domaine et hébergement inclus</div>
+                <div class="trust-number">À Dijon</div>
+                <div class="trust-label">Une entreprise bourguignonne à taille humaine</div>
             </div>
             <div class="trust-stat">
-                <div class="trust-number">À vos côtés</div>
-                <div class="trust-label">Assistance par mail en jours ouvrés</div>
+                <div class="trust-number">En direct</div>
+                <div class="trust-label">Joignable par mail, téléphone ou Instagram</div>
             </div>
         </div>
     </div>
@@ -1833,7 +1849,7 @@
         <div class="container">
             <h2 class="section-title"><span>🎨</span> Exemples de nos réalisations</h2>
             <p class="section-subtitle">
-                Quelques exemples concrets des univers et des activités que nous pouvons accompagner.
+                Quelques projets que j’ai eu plaisir à créer pour des activités et des univers différents.
             </p>
 
             <div class="examples-grid">
@@ -1933,7 +1949,7 @@
     <div class="contact-section" id="contact">
         <div class="contact-container">
             <h2>Votre premier aperçu commence ici</h2>
-            <p style="text-align:center;color:var(--text-secondary);margin-bottom:24px;font-size:1.15em;">Répondez au questionnaire. Je préparerai une première proposition de site, puis nous pourrons l’adapter ensemble.</p>
+            <p style="text-align:center;color:var(--text-secondary);margin-bottom:24px;font-size:1.15em;">Parlez-moi de votre activité. Je préparerai une première proposition de site, puis on pourra l’adapter ensemble. Vous échangez directement avec le créateur du site, ici en Bourgogne.</p>
             <a class="cta-button" style="display:block;text-align:center" href="/questionnaire">Commencer le questionnaire</a>
             <p style="text-align:center;color:var(--text-secondary);margin-top:18px">Pas de paiement à cette étape. Vous pourrez demander vos modifications en répondant à l’email de présentation.</p>
         </div>
