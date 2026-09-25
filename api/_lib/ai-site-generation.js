@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const { getVercelOidcToken } = require('@vercel/oidc');
 const { supabaseRequest } = require('./admin-auth');
 const { sendTransactionalEmail, previewReadyEmail, recordSentEmail } = require('./transactional-email');
 
@@ -53,7 +54,11 @@ async function fetchBriefPhotos(briefId, paths) {
 }
 
 async function callModel(prompt, photoPaths, briefId) {
-  const authToken = process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN;
+  let authToken = process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN;
+  if (!authToken) {
+    try { authToken = await getVercelOidcToken(); }
+    catch (error) { console.error('Jeton OIDC Vercel indisponible:', error.message); }
+  }
   if (!authToken) throw new Error('Authentification Vercel AI Gateway absente (activez OIDC ou configurez AI_GATEWAY_API_KEY).');
   const images = await fetchBriefPhotos(briefId, photoPaths);
   const response = await fetch('https://ai-gateway.vercel.sh/v1/chat/completions', {
