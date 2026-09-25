@@ -192,11 +192,6 @@
       form.addEventListener('submit', async event => {
         event.preventDefault();
         if (!form.reportValidity()) return;
-        if (!window.emailjs) {
-          status.textContent = 'Le formulaire ne peut pas joindre le service de messagerie pour le moment. Réessayez plus tard ou écrivez-moi directement.';
-          status.hidden = false;
-          return;
-        }
         const answers = Object.fromEntries(new FormData(form).entries());
         delete answers.photos;
         const selectedPhotos = [...photoInput.files];
@@ -227,6 +222,7 @@
         submit.textContent = 'Envoi en cours…';
         let savedReference = '';
         let databaseWarning = '';
+        let confirmationEmailSent = false;
         try {
           const photos = [];
           for (const photo of selectedPhotos) photos.push(await compressPhoto(photo));
@@ -234,11 +230,15 @@
           const saveResult = await saved.json();
           if (!saved.ok && saved.status === 503) databaseWarning = 'Supabase reste à configurer : les réponses sont transmises par e-mail à JL Studio, mais les photos ne sont pas encore enregistrées dans le tableau de bord.';
           else if (!saved.ok) throw new Error(saveResult.error || 'Le dossier n’a pas pu être enregistré.');
-          else savedReference = saveResult.reference || 'enregistrée';
-          window.emailjs.init('CYp7N-IF4P4kOd2iL');
+          else { savedReference = saveResult.reference || 'enregistrée'; confirmationEmailSent = saveResult.requestEmailSent === true; }
           photoInput.disabled = true;
-          await window.emailjs.sendForm('service_nubowcp','template_afutqdp',form);
-          document.getElementById('submissionNote').textContent = databaseWarning;
+          if (window.emailjs) {
+            window.emailjs.init('CYp7N-IF4P4kOd2iL');
+            await window.emailjs.sendForm('service_nubowcp','template_afutqdp',form);
+          }
+          document.getElementById('submissionNote').textContent = databaseWarning || (confirmationEmailSent
+            ? `Un e-mail de confirmation a été envoyé à ${answers.user_email}. Votre maquette vous sera envoyée sous 48 heures maximum.`
+            : 'Votre demande est enregistrée, mais l’e-mail de confirmation n’a pas pu être envoyé. Je préparerai votre aperçu sous 48 heures maximum ; contactez-moi si vous n’avez pas de nouvelles dans ce délai.');
           document.getElementById('selectedOffer').textContent = planNames[answers.formula] || answers.formula;
           document.getElementById('formCard').hidden = true;
           document.getElementById('successCard').hidden = false;
@@ -246,7 +246,9 @@
         } catch (error) {
           console.error('Échec de l’envoi du questionnaire', error);
           if (savedReference) {
-            document.getElementById('submissionNote').textContent = 'Votre demande est bien enregistrée dans mon espace de suivi. La notification par e-mail est temporairement indisponible ; je retrouverai tout de même votre dossier.';
+            document.getElementById('submissionNote').textContent = confirmationEmailSent
+              ? 'Votre demande est enregistrée et le courriel de confirmation client est parti. Une notification administrative est momentanément indisponible ; je retrouverai votre dossier.'
+              : 'Votre demande est bien enregistrée dans mon espace de suivi, mais le courriel de confirmation client n’a pas pu être envoyé. Contactez-moi si vous ne recevez pas de nouvelles sous 48 heures.';
             document.getElementById('selectedOffer').textContent = planNames[answers.formula] || answers.formula;
             formCard.hidden = true;
             document.getElementById('successCard').hidden = false;

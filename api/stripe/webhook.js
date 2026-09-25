@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const { json, supabaseRequest } = require('../_lib/admin-auth');
-const { stripeRequest } = require('../_lib/stripe-billing');
+const { stripeRequest, PLANS } = require('../_lib/stripe-billing');
+const { sendTransactionalEmail, welcomeEmail } = require('../_lib/transactional-email');
 
 module.exports.config = { api: { bodyParser: false } };
 
@@ -91,6 +92,32 @@ module.exports = async function handler(req, res) {
       && object?.mode === 'subscription' && object?.subscription
       && ['paid', 'no_payment_required'].includes(object.payment_status)) {
       await syncSubscription(object.subscription, object.client_reference_id || object.metadata?.client_id);
+      const clientId = object.client_reference_id || object.metadata?.client_id;
+      const clients = await supabaseRequest(`clients?id=eq.${encodeURIComponent(clientId)}&select=id,company_name,contact_name,contact_email,plan,monthly_price_cents,welcome_email_sent_at`);
+      const client = clients?.[0];
+      const plan = PLANS[String(object.metadata?.plan || '').toLowerCase()];
+      if (!client || !plan) throw new Error('Impossible de préparer le courriel de bienvenue : fiche client ou formule absente.');
+      if (!client.welcome_email_sent_at) {
+        try {
+          await sendTransactionalEmail({
+            to: client.contact_email,
+            ...welcomeEmail(client, plan, Number.isInteger(object.amount_total) ? object.amount_total : plan.monthly + plan.creation),
+            idempotencyKey: `payment-welcome-${object.id}`
+          });
+        } catch (emailError) {
+          try {
+            await supabaseRequest(`clients?id=eq.${encodeURIComponent(client.id)}`, {
+              method: 'PATCH', headers: { Prefer: 'return=minimal' },
+              body: JSON.stringify({ welcome_email_last_error: String(emailError.message || 'Erreur de messagerie').slice(0, 500) })
+            });
+          } catch {}
+          throw emailError;
+        }
+        await supabaseRequest(`clients?id=eq.${encodeURIComponent(client.id)}`, {
+          method: 'PATCH', headers: { Prefer: 'return=minimal' },
+          body: JSON.stringify({ welcome_email_sent_at: new Date().toISOString(), welcome_email_last_error: null })
+        });
+      }
     }
     if (event.type === 'customer.subscription.created' || event.type === 'customer.subscription.updated'
       || event.type === 'customer.subscription.deleted' || event.type === 'customer.subscription.paused'

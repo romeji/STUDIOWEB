@@ -1,6 +1,7 @@
 const MAX_TOTAL_IMAGE_BYTES = 2_500_000;
 const MAX_IMAGE_BYTES = 500_000;
 const allowedTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
+const { sendTransactionalEmail, receivedEmail } = require('./_lib/transactional-email');
 
 function respond(res, status, body) {
   res.setHeader('Cache-Control', 'no-store');
@@ -77,7 +78,24 @@ module.exports = async function handler(req, res) {
       body: JSON.stringify(row)
     });
     if (!insert.ok) throw new Error(`Supabase Database a refusé la demande (${insert.status}).`);
-    return respond(res, 201, { ok: true, reference: id });
+    let requestEmailSent = false;
+    const emailPatch = {};
+    try {
+      await sendTransactionalEmail({ to: email, ...receivedEmail(row), idempotencyKey: `request-received-${id}` });
+      requestEmailSent = true;
+      emailPatch.request_email_sent_at = new Date().toISOString();
+      emailPatch.email_last_error = null;
+    } catch (emailError) {
+      console.error('Courriel de confirmation client non envoyé:', emailError.message);
+      emailPatch.email_last_error = String(emailError.message || 'Erreur de messagerie').slice(0, 500);
+    }
+    try {
+      await fetch(`${SUPABASE_URL}/rest/v1/briefs?id=eq.${encodeURIComponent(id)}`, {
+        method: 'PATCH', headers: { apikey: SUPABASE_SECRET_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+        body: JSON.stringify(emailPatch)
+      });
+    } catch (statusError) { console.error('État du courriel de confirmation non enregistré:', statusError.message); }
+    return respond(res, 201, { ok: true, reference: id, requestEmailSent });
   } catch (error) {
     console.error('Enregistrement du brief impossible:', error.message);
     return respond(res, 500, { error: 'Votre demande n’a pas pu être enregistrée. Réessayez ou contactez JL Studio par e-mail.' });

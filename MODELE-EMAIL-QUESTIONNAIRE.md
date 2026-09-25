@@ -24,6 +24,8 @@ JL Studio
 
 ## Après réception du questionnaire
 
-Le formulaire appelle EmailJS (`service_nubowcp`, modèle `template_afutqdp`). Vérifier dans le tableau de bord EmailJS que le destinataire du modèle est bien la boîte JL Studio et que le corps du message affiche `{{message}}` : ce champ contient le complément du client suivi du prompt de création détaillé. Le formulaire affiche sa confirmation uniquement si EmailJS accepte l’envoi.
+Quand Supabase et Resend sont configurés, le serveur enregistre le dossier et envoie au client un e-mail de confirmation annonçant une maquette sous 48 heures maximum. Le prompt et les réponses sont consultables dans `/admin`. La notification de demande destinée à JL Studio est toujours déclenchée par le formulaire EmailJS.
 
-Le questionnaire ne génère pas encore le site, son hébergement temporaire, un e-mail automatique au client ni un lien de paiement. Après réception, lire le brief, utiliser le prompt pour préparer la première maquette, l’héberger manuellement pour prévisualisation, puis répondre au client avec son lien. Recueillir ses retours et confirmer par écrit le périmètre et la formule avant la mise en ligne et le paiement. Les réponses sont transmises au service EmailJS configuré pour ce formulaire.
+La création de la première maquette reste manuelle : ouvrir le dossier, utiliser son prompt pour produire le site vitrine, puis coller le HTML dans `/admin`. L’enregistrement crée un lien privé et déclenche l’e-mail « votre maquette est prête ». Le client peut alors demander des ajustements puis choisir sa formule; Stripe Checkout facture les frais de création et le premier mois. Après confirmation du webhook Stripe, le client reçoit automatiquement le récapitulatif de bienvenue. La production du site, les retours créatifs et sa publication restent des étapes humaines.
+
+Pour activer les e-mails clients, configurer `RESEND_API_KEY`, `RESEND_FROM_EMAIL` (domaine vérifié) et facultativement `RESEND_REPLY_TO` dans Vercel, puis exécuter `supabase-maquette-paiements.sql` dans Supabase.
