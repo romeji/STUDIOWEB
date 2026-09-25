@@ -12,8 +12,8 @@ L’interface `/admin` s’appuie sur Supabase Auth, Postgres et Storage. Les r�
 
 ## 2. Configurer le site et Vercel
 
-1. Dans `admin-config.js`, remplacer `VOTRE-PROJET` et `VOTRE_CLE_PUBLISHABLE` par l’URL du projet et sa clé publishable. Cette clé peut être exposée au navigateur ; les données restent protégées par RLS.
-2. Dans les variables d’environnement du projet Vercel, ajouter `SUPABASE_URL` et `SUPABASE_SERVICE_ROLE_KEY`. Ajouter `SUPABASE_ANON_KEY` pour le contrôle de session lors d’une éventuelle résiliation Stripe. Ne jamais placer la clé `service_role` dans un fichier public ou dans `admin-config.js`.
+1. `admin-config.js` contient l’URL de StudioWeb et la clé publishable. Cette clé peut être exposée au navigateur ; les données restent protégées par RLS.
+2. Dans les variables d’environnement du projet Vercel, ajouter `SUPABASE_URL`, `SUPABASE_SECRET_KEY` (clé secrète `sb_secret_…`, uniquement côté serveur) et `SUPABASE_PUBLISHABLE_KEY` (clé publique `sb_publishable_…`). Ajouter `STRIPE_SECRET_KEY` uniquement si la résiliation Stripe est activée. Ne jamais placer la clé secrète Supabase dans un fichier public ou dans `admin-config.js`.
 3. Redéployer. Vérifier l’envoi d’un lien magique à l’adresse administrateur, puis l’accès aux trois onglets.
 
 Une demande de questionnaire est enregistrée dans `briefs`, avec son prompt et des chemins privés vers les photos. Le tableau de bord crée des URL de photo à durée limitée. Les prospects, clients et retouches sont gérés sous authentification et RLS. Le compteur de retouches représente les entrées enregistrées depuis le premier jour du mois courant. Le point d’accès public du questionnaire applique une limite de cinq envois par adresse réseau et par heure ; seul un condensat de l’adresse est conservé dans la table de limitation et ses entrées expirent après 48 heures.

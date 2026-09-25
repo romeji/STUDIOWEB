@@ -2,8 +2,18 @@
 create extension if not exists pgcrypto;
 
 create or replace function public.is_jl_admin()
-returns boolean language sql stable security definer set search_path = '' as $$
+returns boolean language sql stable security invoker set search_path = '' as $$
   select lower(coalesce(auth.jwt() ->> 'email', '')) = 'lopes.jerome21@gmail.com';
+$$;
+revoke all on function public.is_jl_admin() from public, anon;
+grant execute on function public.is_jl_admin() to authenticated;
+
+do $$
+begin
+  if to_regprocedure('public.rls_auto_enable()') is not null then
+    execute 'revoke all on function public.rls_auto_enable() from public, anon, authenticated';
+  end if;
+end;
 $$;
 
 create or replace function public.allow_only_jl_admin_signup()
@@ -15,6 +25,7 @@ begin
   return new;
 end;
 $$;
+revoke all on function public.allow_only_jl_admin_signup() from public, anon, authenticated;
 drop trigger if exists jl_admin_only_signup on auth.users;
 create trigger jl_admin_only_signup before insert on auth.users for each row execute function public.allow_only_jl_admin_signup();
 
@@ -80,6 +91,8 @@ create policy "JL admin manages prospects" on public.prospects for all to authen
 revoke all on public.briefs, public.clients, public.edit_logs, public.prospects from anon;
 grant select, update on public.briefs to authenticated;
 grant select, insert, update, delete on public.clients, public.edit_logs, public.prospects to authenticated;
+grant insert on public.briefs to service_role;
+grant select, update on public.clients to service_role;
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('brief-photos', 'brief-photos', false, 500000, array['image/jpeg','image/png','image/webp'])

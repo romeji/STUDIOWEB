@@ -21,9 +21,9 @@
 <script>
 (() => {
  const ADMIN='lopes.jerome21@gmail.com', login=document.getElementById('login'), app=document.getElementById('app'), status=document.getElementById('appStatus');
- const configured=window.JL_SUPABASE_URL && window.JL_SUPABASE_ANON_KEY && !window.JL_SUPABASE_URL.includes('VOTRE-PROJET') && !window.JL_SUPABASE_ANON_KEY.includes('VOTRE_CLE');
+ const configured=window.JL_SUPABASE_URL && window.JL_SUPABASE_PUBLISHABLE_KEY && !window.JL_SUPABASE_URL.includes('VOTRE-PROJET') && !window.JL_SUPABASE_PUBLISHABLE_KEY.includes('VOTRE_CLE');
  if(!configured || !window.supabase){document.getElementById('loginStatus').textContent='Connexion à configurer : renseignez l’URL Supabase et la clé publishable dans admin-config.js, puis exécutez supabase-schema.sql.';document.getElementById('loginForm').addEventListener('submit',e=>{e.preventDefault();document.getElementById('loginStatus').textContent='La configuration Supabase est nécessaire avant la connexion.'});return;}
- const db=window.supabase.createClient(window.JL_SUPABASE_URL,window.JL_SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+ const db=window.supabase.createClient(window.JL_SUPABASE_URL,window.JL_SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
  const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const date=value=>value?new Date(value).toLocaleDateString('fr-FR'):'—';
  function showError(target,error){target.textContent=error?.message||String(error||'Une erreur est survenue.');}

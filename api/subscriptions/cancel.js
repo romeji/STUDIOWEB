@@ -3,18 +3,18 @@ const ADMIN_EMAIL = 'lopes.jerome21@gmail.com';
 module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'POST') return res.status(405).json({ error: 'Méthode non autorisée.' });
-  const { SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, STRIPE_SECRET_KEY } = process.env;
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY || !SUPABASE_SERVICE_ROLE_KEY || !STRIPE_SECRET_KEY) return res.status(503).json({ error: 'Ajoutez les clés Stripe et Supabase à Vercel pour activer la résiliation en ligne.' });
+  const { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, SUPABASE_SECRET_KEY, STRIPE_SECRET_KEY } = process.env;
+  if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY || !SUPABASE_SECRET_KEY || !STRIPE_SECRET_KEY) return res.status(503).json({ error: 'Ajoutez les clés Stripe et Supabase à Vercel pour activer la résiliation en ligne.' });
   const token = String(req.headers.authorization || '').replace(/^Bearer\s+/i, '');
   if (!token) return res.status(401).json({ error: 'Connexion administrateur requise.' });
   try {
-    const auth = await fetch(`${SUPABASE_URL}/auth/v1/user`, { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${token}` } });
+    const auth = await fetch(`${SUPABASE_URL}/auth/v1/user`, { headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${token}` } });
     if (!auth.ok) return res.status(401).json({ error: 'Session expirée. Reconnectez-vous.' });
     const user = await auth.json();
     if (String(user.email || '').toLowerCase() !== ADMIN_EMAIL) return res.status(403).json({ error: 'Accès refusé.' });
     const { clientId } = req.body || {};
     if (!clientId) return res.status(400).json({ error: 'Client manquant.' });
-    const dbHeaders = { apikey: SUPABASE_SERVICE_ROLE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}` };
+    const dbHeaders = { apikey: SUPABASE_SECRET_KEY };
     const result = await fetch(`${SUPABASE_URL}/rest/v1/clients?id=eq.${encodeURIComponent(clientId)}&select=id,provider,provider_subscription_id`, { headers: dbHeaders });
     if (!result.ok) throw new Error('Lecture de l’abonnement impossible.');
     const [client] = await result.json();

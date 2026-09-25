@@ -10,8 +10,8 @@ function respond(res, status, body) {
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return respond(res, 405, { error: 'Méthode non autorisée.' });
-  const { SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } = process.env;
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return respond(res, 503, { error: 'Le stockage des demandes Supabase n’est pas encore configuré.' });
+  const { SUPABASE_URL, SUPABASE_SECRET_KEY } = process.env;
+  if (!SUPABASE_URL || !SUPABASE_SECRET_KEY) return respond(res, 503, { error: 'Le stockage des demandes Supabase n’est pas encore configuré.' });
 
   try {
     const payload = req.body && typeof req.body === 'object' ? req.body : {};
@@ -24,9 +24,9 @@ module.exports = async function handler(req, res) {
     const email = String(answers.user_email).trim();
     if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return respond(res, 400, { error: 'Adresse e-mail invalide.' });
     const forwarded = String(req.headers?.['x-real-ip'] || req.headers?.['x-forwarded-for'] || 'unknown').split(',')[0].trim();
-    const ipHash = require('crypto').createHash('sha256').update(`${SUPABASE_SERVICE_ROLE_KEY}:${forwarded}`).digest('hex');
+    const ipHash = require('crypto').createHash('sha256').update(`${SUPABASE_SECRET_KEY}:${forwarded}`).digest('hex');
     const rate = await fetch(`${SUPABASE_URL}/rest/v1/rpc/consume_brief_submission`, {
-      method: 'POST', headers: { apikey: SUPABASE_SERVICE_ROLE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`, 'Content-Type': 'application/json' },
+      method: 'POST', headers: { apikey: SUPABASE_SECRET_KEY, 'Content-Type': 'application/json' },
       body: JSON.stringify({ p_ip_hash: ipHash })
     });
     if (!rate.ok) throw new Error(`La limite anti-abus Supabase n’est pas configurée (${rate.status}).`);
@@ -52,7 +52,7 @@ module.exports = async function handler(req, res) {
       const path = `${id}/${index + 1}.${ext}`;
       const upload = await fetch(`${SUPABASE_URL}/storage/v1/object/brief-photos/${path}`, {
         method: 'POST',
-        headers: { apikey: SUPABASE_SERVICE_ROLE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`, 'Content-Type': photo.type, 'x-upsert': 'false' },
+        headers: { apikey: SUPABASE_SECRET_KEY, 'Content-Type': photo.type, 'x-upsert': 'false' },
         body: buffer
       });
       if (!upload.ok) throw new Error(`Supabase Storage a refusé l’image (${upload.status}).`);
@@ -73,7 +73,7 @@ module.exports = async function handler(req, res) {
     };
     const insert = await fetch(`${SUPABASE_URL}/rest/v1/briefs`, {
       method: 'POST',
-      headers: { apikey: SUPABASE_SERVICE_ROLE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      headers: { apikey: SUPABASE_SECRET_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
       body: JSON.stringify(row)
     });
     if (!insert.ok) throw new Error(`Supabase Database a refusé la demande (${insert.status}).`);
