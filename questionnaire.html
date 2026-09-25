@@ -195,8 +195,13 @@
         steps.forEach((step, i) => {
           const active = i === current;
           step.hidden = !active;
-          // Les champs des étapes masquées ne doivent pas bloquer la validation native.
-          step.querySelectorAll('input,select,textarea,button').forEach(field => { field.disabled = !active; });
+          // Garder tous les champs activés pour que FormData conserve les réponses;
+          // déplacer l'obligation native sur l'étape visible pour éviter les blocages.
+          step.querySelectorAll('input,select,textarea').forEach(field => {
+            if (!field.hasAttribute('data-step-required')) field.dataset.stepRequired = field.required ? 'true' : 'false';
+            field.disabled = false;
+            field.required = active && field.dataset.stepRequired === 'true';
+          });
         });
         label.textContent = `Étape ${current + 1} sur ${steps.length}`;
         bar.style.width = `${((current + 1) / steps.length) * 100}%`;
@@ -211,7 +216,7 @@
         const nextStep = current + 1;
         if (nextStep < steps.length) {
           setActiveStep(nextStep);
-          steps[current].querySelector('input:not(:disabled),select:not(:disabled),textarea:not(:disabled)')?.focus({preventScroll:true});
+          steps[current].querySelector('input,select,textarea')?.focus({preventScroll:true});
         }
       });
       prev.addEventListener('click', () => setActiveStep(Math.max(0, current - 1)));
