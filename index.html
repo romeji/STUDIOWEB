@@ -241,6 +241,10 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
         }
+        .nav-item.nav-contact { color:#fff; border-color:rgba(255,255,255,.35); background:linear-gradient(135deg,#51428f 0%,#7b4d87 100%); box-shadow:0 6px 18px rgba(43,31,88,.24); }
+        .nav-item.nav-contact:hover { color:#fff; filter:brightness(1.08); background:linear-gradient(135deg,#51428f 0%,#7b4d87 100%); }
+        body:not(.dark-mode) .nav-item.nav-contact { color:#251d3d; border-color:rgba(81,66,143,.28); background:linear-gradient(135deg,#c8bdf0 0%,#dfc6e5 100%); }
+        body:not(.dark-mode) .nav-item.nav-contact:hover { color:#251d3d; background:linear-gradient(135deg,#c8bdf0 0%,#dfc6e5 100%); }
 
         .theme-toggle {
             position: fixed;
@@ -2029,7 +2033,7 @@
         <a href="#offre" class="nav-item">🎯 Offres</a>
         <a href="#valeurs" class="nav-item">Nos valeurs</a>
         <a href="/questionnaire" class="nav-item">📋 Votre projet</a>
-        <a href="/contact" class="nav-item">Nous contacter</a>
+        <a href="/contact" class="nav-item nav-contact">Nous contacter</a>
     </div>
 
     <!-- Scroll to top -->
@@ -2342,7 +2346,7 @@
             <h2>Votre premier aperçu commence ici</h2>
             <p style="text-align:center;color:var(--text-secondary);margin-bottom:24px;font-size:1.15em;">Répondez au questionnaire. Je préparerai une première proposition de site, puis nous pourrons l’adapter ensemble.</p>
             <a class="cta-button questionnaire-cta" style="display:block;text-align:center" href="/questionnaire">Commencer le questionnaire</a>
-            <p style="text-align:center;margin-top:16px"><a class="cta-button action-gradient" style="display:inline-block;text-align:center" href="/contact">Nous contacter</a></p>
+            <p style="text-align:center;margin-top:16px">Une question avant de démarrer ? <a href="/contact">Nous contacter</a></p>
             <p style="text-align:center;color:var(--text-secondary);margin-top:18px">Pas de paiement à cette étape. Vous pourrez demander vos modifications en répondant à l’email de présentation.</p>
         </div>
     </div>
