@@ -190,9 +190,14 @@
       };
       const queryPlan = new URLSearchParams(location.search).get('formule');
       if (queryPlan && [...formula.options].some(option => option.value === queryPlan)) formula.value = queryPlan;
-      function showStep(index) {
+      function setActiveStep(index) {
         current = index;
-        steps.forEach((step, i) => { step.hidden = i !== current; });
+        steps.forEach((step, i) => {
+          const active = i === current;
+          step.hidden = !active;
+          // Les champs des étapes masquées ne doivent pas bloquer la validation native.
+          step.querySelectorAll('input,select,textarea,button').forEach(field => { field.disabled = !active; });
+        });
         label.textContent = `Étape ${current + 1} sur ${steps.length}`;
         bar.style.width = `${((current + 1) / steps.length) * 100}%`;
         prev.hidden = current === 0;
@@ -203,10 +208,14 @@
       next.addEventListener('click', () => {
         const invalid = [...steps[current].querySelectorAll('input,select,textarea')].find(field => !field.checkValidity());
         if (invalid) { invalid.reportValidity(); return; }
-        showStep(current + 1);
-        steps[current].querySelector('input,select,textarea')?.focus({preventScroll:true});
+        const nextStep = current + 1;
+        if (nextStep < steps.length) {
+          setActiveStep(nextStep);
+          steps[current].querySelector('input:not(:disabled),select:not(:disabled),textarea:not(:disabled)')?.focus({preventScroll:true});
+        }
       });
-      prev.addEventListener('click', () => showStep(Math.max(0, current - 1)));
+      prev.addEventListener('click', () => setActiveStep(Math.max(0, current - 1)));
+      setActiveStep(0);
       form.addEventListener('submit', async event => {
         event.preventDefault();
         if (!form.reportValidity()) return;
