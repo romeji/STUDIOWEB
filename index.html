@@ -1106,6 +1106,10 @@
         .faq-item p { color:var(--text-secondary); line-height:1.65; padding:0 0 18px; }
         .faq-item summary:focus-visible { outline:3px solid var(--accent-primary); outline-offset:3px; }
         @media (max-width:760px) { .faq-grid { grid-template-columns:1fr; } }
+        /* Révélation progressive des sections au défilement */
+        .scroll-reveal { opacity:0; transform:translateY(22px); transition:opacity .65s ease, transform .65s cubic-bezier(.2,.7,.2,1); transition-delay:var(--reveal-delay,0ms); animation:none !important; }
+        .scroll-reveal.is-visible { opacity:1; transform:translateY(0); }
+        @media (prefers-reduced-motion: reduce) { .scroll-reveal, .scroll-reveal.is-visible { opacity:1; transform:none; transition:none; } }
 
         .benefit-card {
             background: var(--card-bg);
@@ -2460,7 +2464,32 @@
             }, 16);
         }
         
-        // Observer pour les animations au scroll
+        // Révéler les modules lorsqu’ils entrent dans la zone de lecture
+        const revealTargets = document.querySelectorAll('.section-title, .what-is-card, .benefit-card, .values-card, .timeline-item, .trust-stat, .example-card, .offer-box, .pricing-card, .faq-item, .contact-container');
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!prefersReducedMotion && 'IntersectionObserver' in window) {
+            revealTargets.forEach((element, index) => {
+                element.classList.add('scroll-reveal');
+                const groupIndex = [...element.parentElement.children].filter(sibling => sibling.matches('.section-title, .what-is-card, .benefit-card, .values-card, .timeline-item, .trust-stat, .example-card, .offer-box, .pricing-card, .faq-item, .contact-container')).indexOf(element);
+                element.style.setProperty('--reveal-delay', `${Math.max(0, groupIndex) * 85}ms`);
+            });
+            const revealObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const element = entry.target;
+                        element.classList.add('is-visible');
+                        observer.unobserve(element);
+                        window.setTimeout(() => {
+                            element.classList.remove('scroll-reveal', 'is-visible');
+                            element.style.removeProperty('--reveal-delay');
+                        }, 1000);
+                    }
+                });
+            }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+            revealTargets.forEach(element => revealObserver.observe(element));
+        }
+
+        // Observer des compteurs animés au moment de leur visibilité
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
