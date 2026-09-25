@@ -50,6 +50,7 @@ async function syncSubscription(subscriptionId, clientIdHint) {
     provider_subscription_id: subscription.id,
     subscription_status: status
   };
+  if (status === 'active') update.stripe_checkout_session_id = null;
   if (status === 'active' && subscription.start_date) update.started_at = new Date(subscription.start_date * 1000).toISOString().slice(0, 10);
   if (status === 'canceled') update.canceled_at = subscription.canceled_at
     ? new Date(subscription.canceled_at * 1000).toISOString()
@@ -58,6 +59,17 @@ async function syncSubscription(subscriptionId, clientIdHint) {
     method: 'PATCH', headers: { Prefer: 'return=representation' }, body: JSON.stringify(update)
   });
   if (!rows?.length) throw new Error('Fiche client absente ou impossible à relier à cet abonnement.');
+  if (status === 'active') {
+    const clients = await supabaseRequest(`clients?id=eq.${encodeURIComponent(rows[0].id)}&select=brief_id`);
+    const briefId = clients?.[0]?.brief_id;
+    if (briefId) {
+      const briefUpdate = { status: 'converti' };
+      if (subscription.metadata?.plan) briefUpdate.plan_interest = subscription.metadata.plan;
+      await supabaseRequest(`briefs?id=eq.${encodeURIComponent(briefId)}`, {
+        method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify(briefUpdate)
+      });
+    }
+  }
 }
 
 module.exports = async function handler(req, res) {
