@@ -43,6 +43,8 @@
     fieldset[hidden], [hidden] { display:none!important; }
     legend { font-size:1.35rem; font-weight:780; letter-spacing:-.02em; margin-bottom:22px; }
     .hint { color:var(--muted); margin:-12px 0 22px; font-size:.94rem; }
+    .email-important { margin:-8px 0 20px; padding:13px 15px; border:1px solid #d8d0f3; border-left:4px solid var(--accent); border-radius:12px; background:#f7f5ff; color:#494261; font-size:.92rem; line-height:1.55; }
+    .email-important strong { color:#382e69; }
     .field { margin:0 0 20px; }
     label { display:block; font-size:.94rem; font-weight:680; margin-bottom:7px; }
     input:not([type=checkbox]), select, textarea { width:100%; border:1px solid #d8dbe5; border-radius:12px; padding:13px 14px; background:#fff; color:var(--ink); font:inherit; outline:none; }
@@ -106,9 +108,9 @@
           <div class="field"><label for="references">Un site ou une ambiance que vous aimez <span class="optional">(facultatif)</span></label><input id="references" name="references" placeholder="Un lien ou quelques mots pour décrire ce qui vous plaît"></div>
           <div class="field"><label for="photos">Quelques images pour guider la maquette <span class="optional">(facultatif, 6 maximum)</span></label><input id="photos" name="photos" type="file" accept="image/jpeg,image/png,image/webp" multiple><p class="fine upload-note">Photos de votre établissement, réalisations ou ambiance souhaitée. JPG, PNG ou WebP ; elles seront réduites avant l’envoi.</p></div>
         </fieldset>
-        <fieldset data-step="3" hidden><legend>Vos coordonnées et votre formule</legend><p class="hint">Je vous enverrai votre premier aperçu par email. Aucun paiement n’est demandé pour cette étape.</p>
+        <fieldset data-step="3" hidden><legend>Vos coordonnées et votre formule</legend><p class="hint">Je vous enverrai votre premier aperçu par e-mail. Aucun paiement n’est demandé pour cette étape.</p>
           <div class="field"><label for="user_name">Votre nom *</label><input id="user_name" name="user_name" required autocomplete="name" placeholder="Prénom et nom"></div>
-          <div class="field"><label for="user_email">Votre email *</label><input id="user_email" name="user_email" required type="email" autocomplete="email" placeholder="vous@entreprise.fr"></div>
+          <div class="field"><label for="user_email">Votre adresse e-mail *</label><input id="user_email" name="user_email" required type="email" autocomplete="email" aria-describedby="emailImportant" placeholder="vous@entreprise.fr"><p class="email-important" id="emailImportant"><strong>Cette adresse est essentielle :</strong> vérifiez-la attentivement et utilisez une boîte que vous consultez. Sans adresse exacte, je ne pourrai pas vous transmettre votre démo ni vos factures. Vous y recevrez la confirmation, le lien de votre site démo après sa génération et, si vous souscrivez, vos factures et informations de paiement. <strong>Une seule démo peut être demandée par adresse sur une période de 30 jours.</strong></p></div>
           <div class="field"><label for="user_phone">Votre téléphone <span class="optional">(facultatif)</span></label><input id="user_phone" name="user_phone" type="tel" autocomplete="tel" placeholder="06 12 34 56 78"></div>
           <div class="field"><label for="formula">Quelle formule vous intéresse ? *</label><select id="formula" name="formula" required><option value="">Choisissez une formule</option><option value="essentiel">Essentiel — 1 page · 49 € TTC/mois + 199 € TTC de création</option><option value="standard">Standard — jusqu’à 3 pages maximum · 89 € TTC/mois + 149 € TTC de création</option><option value="complete">Complète — jusqu’à 6 pages ou plus · 129 € TTC/mois + 99 € TTC de création · retouches illimitées</option><option value="conseil">Je souhaite être conseillé</option></select></div>
           <div class="field"><label for="message">Une précision pour votre projet <span class="optional">(facultatif)</span></label><textarea id="message" name="message" placeholder="Ajoutez ici toute information utile"></textarea></div>
