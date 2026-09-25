@@ -2,7 +2,7 @@ const MAX_TOTAL_IMAGE_BYTES = 2_500_000;
 const MAX_IMAGE_BYTES = 500_000;
 const allowedTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
 const crypto = require('node:crypto');
-const { sendTransactionalEmail, receivedEmail, recordSentEmail } = require('./_lib/transactional-email');
+const { sendTransactionalEmail, receivedEmail, officialSiteReadyEmail, recordSentEmail } = require('./_lib/transactional-email');
 const { sendBriefNotification, loadBriefPhotos } = require('./_lib/brief-notification');
 const { requireAdmin, supabaseRequest } = require('./_lib/admin-auth');
 
@@ -10,6 +10,37 @@ function respond(res, status, body) {
   res.setHeader('Cache-Control', 'no-store');
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
   return res.status(status).json(body);
+}
+
+async function deliverOfficialSite(req, res, payload) {
+  if (!(await requireAdmin(req, res))) return;
+  const clientId = String(payload.clientId || '');
+  const siteUrl = String(payload.siteUrl || '').trim();
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(clientId)) return respond(res, 400, { error: 'Fiche client invalide.' });
+  let parsed;
+  try { parsed = new URL(siteUrl); } catch { return respond(res, 400, { error: 'Saisissez une adresse de site valide.' }); }
+  if (parsed.protocol !== 'https:' || parsed.username || parsed.password || siteUrl.length > 2048) return respond(res, 400, { error: 'Utilisez une adresse de site publique commençant par https://.' });
+  try {
+    const rows = await supabaseRequest(`clients?id=eq.${encodeURIComponent(clientId)}&select=id,company_name,contact_name,contact_email,subscription_status&limit=1`);
+    const client = rows?.[0];
+    if (!client) return respond(res, 404, { error: 'Client introuvable.' });
+    if (client.subscription_status !== 'active') return respond(res, 409, { error: 'Le règlement de l’abonnement doit être confirmé avant la livraison du site officiel.' });
+    await supabaseRequest(`clients?id=eq.${encodeURIComponent(clientId)}`, {
+      method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ official_site_url: parsed.href })
+    });
+    const mail = officialSiteReadyEmail(client, parsed.href);
+    const emailKey = crypto.createHash('sha256').update(`${clientId}:${parsed.href}`).digest('hex');
+    const providerId = await sendTransactionalEmail({ to: client.contact_email, ...mail, idempotencyKey: `official-site-${emailKey}` });
+    const sentAt = new Date().toISOString();
+    await supabaseRequest(`clients?id=eq.${encodeURIComponent(clientId)}`, {
+      method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ official_site_email_sent_at: sentAt })
+    });
+    await recordSentEmail({ clientId, to: client.contact_email, category: 'official-site-delivery', ...mail, providerId });
+    return respond(res, 200, { ok: true, emailSent: true, siteUrl: parsed.href, sentAt });
+  } catch (error) {
+    console.error('E-mail de livraison du site non envoyé:', error.message);
+    return respond(res, 502, { error: error.message || 'Le lien est enregistré, mais le courriel de livraison n’a pas pu être envoyé.' });
+  }
 }
 
 module.exports = async function handler(req, res) {
@@ -21,6 +52,7 @@ module.exports = async function handler(req, res) {
 
   try {
     const payload = req.body && typeof req.body === 'object' ? req.body : {};
+    if (payload.action === 'deliver-official-site') return await deliverOfficialSite(req, res, payload);
     if (payload.action === 'retry-admin-notification') {
       if (!(await requireAdmin(req, res))) return;
       const briefId = String(payload.briefId || '');

@@ -62,12 +62,15 @@ create table if not exists public.clients (
   contact_email text not null, contact_phone text not null default '', plan text not null default '',
   monthly_price_cents integer not null default 0, subscription_status text not null default 'pending',
   provider text not null default 'manual', provider_subscription_id text, stripe_checkout_session_id text,
+  official_site_url text, official_site_email_sent_at timestamptz,
   brief_id uuid unique references public.briefs(id) on delete set null,
   started_at date, canceled_at timestamptz,
   created_at timestamptz not null default now()
 );
 alter table public.clients add column if not exists brief_id uuid unique references public.briefs(id) on delete set null;
 alter table public.clients add column if not exists stripe_checkout_session_id text;
+alter table public.clients add column if not exists official_site_url text;
+alter table public.clients add column if not exists official_site_email_sent_at timestamptz;
 alter table public.clients add column if not exists welcome_email_sent_at timestamptz;
 alter table public.clients add column if not exists welcome_email_last_error text;
 create table if not exists public.edit_logs (

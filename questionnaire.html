@@ -241,6 +241,7 @@
         let savedReference = '';
         let databaseWarning = '';
         let confirmationEmailSent = false;
+        let adminBriefEmailSent = false;
         try {
           const photos = [];
           for (const photo of selectedPhotos) photos.push(await compressPhoto(photo));
@@ -248,9 +249,9 @@
           const saveResult = await saved.json();
           if (!saved.ok && saved.status === 503) databaseWarning = 'Supabase reste à configurer : les réponses sont transmises par e-mail à JL Studio, mais les photos ne sont pas encore enregistrées dans le tableau de bord.';
           else if (!saved.ok) throw new Error(saveResult.error || 'Le dossier n’a pas pu être enregistré.');
-          else { savedReference = saveResult.reference || 'enregistrée'; confirmationEmailSent = saveResult.requestEmailSent === true; }
+          else { savedReference = saveResult.reference || 'enregistrée'; confirmationEmailSent = saveResult.requestEmailSent === true; adminBriefEmailSent = saveResult.adminEmailSent === true; }
           photoInput.disabled = true;
-          if (window.emailjs) {
+          if ((databaseWarning || !adminBriefEmailSent) && window.emailjs) {
             window.emailjs.init('CYp7N-IF4P4kOd2iL');
             await window.emailjs.sendForm('service_nubowcp','template_afutqdp',form);
           }

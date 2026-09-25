@@ -44,6 +44,20 @@ function previewReadyEmail(brief, previewUrl, expiresAt) {
   return { subject: `Votre maquette est prête — ${brief.company_name}`, html, text };
 }
 
+function officialSiteReadyEmail(client, officialUrl) {
+  const name = escapeHtml(client.contact_name || 'Bonjour');
+  const company = escapeHtml(client.company_name || 'votre activité');
+  const safeUrl = escapeHtml(officialUrl);
+  const subject = `Votre site officiel est en ligne — ${client.company_name}`;
+  const text = `Bonjour ${client.contact_name || ''},\n\nVotre site officiel pour ${client.company_name} est en ligne : ${officialUrl}\n\nVous pouvez transmettre ce lien à vos clients et l’ajouter à vos supports de communication. Pour toute question ou évolution liée à votre formule, répondez simplement à cet e-mail.\n\nJérôme — JL Studio Web\nDijon, Bourgogne`;
+  const html = shell({
+    preheader: `Le site officiel de ${client.company_name} est en ligne.`,
+    title: 'Votre site officiel est en ligne',
+    body: `<p style="margin:0 0 8px;color:#6957cf;font-weight:800;font-size:12px;letter-spacing:.12em">VOTRE SITE EST EN LIGNE</p><h1 style="margin:0 0 14px;font-size:27px;line-height:1.2">${name}, votre site officiel est prêt.</h1><p style="color:#615d72;line-height:1.7">Le site de <strong>${company}</strong> est maintenant accessible à cette adresse :</p><p style="text-align:center;margin:25px 0"><a href="${safeUrl}" style="display:inline-block;padding:14px 22px;border-radius:10px;background:#705ed5;color:#fff;text-decoration:none;font-weight:800">Voir mon site officiel</a></p><p style="font-size:12px;color:#858092;word-break:break-all">${safeUrl}</p><p style="color:#615d72;line-height:1.7">Vous pouvez partager ce lien avec vos clients et l’ajouter à vos supports de communication. Pour toute question ou évolution liée à votre formule, répondez simplement à cet e-mail.</p>`
+  });
+  return { subject, html, text };
+}
+
 function welcomeEmail(client, plan, firstAmountCents) {
   const name = escapeHtml(client.contact_name || 'Bonjour');
   const company = escapeHtml(client.company_name || 'votre activité');
@@ -116,4 +130,4 @@ async function sendTransactionalEmail({ to, subject, html, text, idempotencyKey,
   return result.id;
 }
 
-module.exports = { sendTransactionalEmail, receivedEmail, briefAdminEmail, previewReadyEmail, welcomeEmail, inboundNotificationEmail, inboundAcknowledgementEmail, recordSentEmail };
+module.exports = { sendTransactionalEmail, receivedEmail, briefAdminEmail, previewReadyEmail, officialSiteReadyEmail, welcomeEmail, inboundNotificationEmail, inboundAcknowledgementEmail, recordSentEmail };
