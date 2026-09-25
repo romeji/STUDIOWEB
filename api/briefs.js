@@ -4,6 +4,7 @@ const allowedTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
 const { sendTransactionalEmail, receivedEmail, recordSentEmail } = require('./_lib/transactional-email');
 const { waitUntil } = require('@vercel/functions');
 const { generateBriefSite } = require('./_lib/ai-site-generation');
+const { requireAdmin, supabaseRequest } = require('./_lib/admin-auth');
 
 function respond(res, status, body) {
   res.setHeader('Cache-Control', 'no-store');
@@ -18,6 +19,18 @@ module.exports = async function handler(req, res) {
 
   try {
     const payload = req.body && typeof req.body === 'object' ? req.body : {};
+    if (payload.action === 'retry-generation') {
+      if (!(await requireAdmin(req, res))) return;
+      const briefId = String(payload.briefId || '');
+      if (!/^[0-9a-f-]{36}$/i.test(briefId)) return respond(res, 400, { error: 'Identifiant de demande invalide.' });
+      const updated = await supabaseRequest(`briefs?id=eq.${encodeURIComponent(briefId)}&ai_generation_status=eq.failed&select=id`, {
+        method: 'PATCH', headers: { Prefer: 'return=representation' },
+        body: JSON.stringify({ ai_generation_status: 'pending', ai_generation_error: null })
+      });
+      if (!updated?.length) return respond(res, 409, { error: 'Cette demande ne peut pas être relancée.' });
+      waitUntil(generateBriefSite(briefId));
+      return respond(res, 202, { ok: true, generation: 'pending' });
+    }
     if (payload.website) return respond(res, 200, { ok: true });
     const answers = payload.answers;
     if (!answers || typeof answers !== 'object' || !answers.user_email || !answers.company_name || payload.consent !== true) {
