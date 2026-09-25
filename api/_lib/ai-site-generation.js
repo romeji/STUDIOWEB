@@ -5,7 +5,7 @@ const { sendTransactionalEmail, previewReadyEmail, recordSentEmail } = require('
 const SITE_URL = 'https://studioweb-eta.vercel.app';
 const MODEL = process.env.AI_SITE_MODEL || 'amazon/nova-pro';
 const MAX_HTML_BYTES = 1_800_000;
-const AI_TIMEOUT_MS = 180_000;
+const AI_TIMEOUT_MS = 40_000;
 
 function sanitizedPrompt(prompt) {
   return String(prompt || '')
@@ -37,21 +37,19 @@ async function fetchBriefPhotos(briefId, paths) {
   const { SUPABASE_URL, SUPABASE_SECRET_KEY } = process.env;
   if (!Array.isArray(paths) || !paths.length) return [];
   if (!SUPABASE_URL || !SUPABASE_SECRET_KEY) throw new Error('Le stockage Supabase n’est pas configuré pour lire les photos.');
-  const images = [];
-  for (const path of paths.slice(0, 6)) {
-    if (typeof path !== 'string' || !path.startsWith(`${briefId}/`) || path.includes('..')) continue;
+  return (await Promise.all(paths.slice(0, 6).map(async path => {
+    if (typeof path !== 'string' || !path.startsWith(`${briefId}/`) || path.includes('..')) return null;
     const response = await fetch(`${SUPABASE_URL}/storage/v1/object/brief-photos/${path.split('/').map(encodeURIComponent).join('/')}`, {
       headers: { apikey: SUPABASE_SECRET_KEY, Authorization: `Bearer ${SUPABASE_SECRET_KEY}` },
-      signal: AbortSignal.timeout(10_000)
+      signal: AbortSignal.timeout(8_000)
     });
     if (!response.ok) throw new Error(`Une photo jointe n’a pas pu être chargée (${response.status}).`);
     const contentType = (response.headers.get('content-type') || '').split(';')[0].toLowerCase();
-    if (!['image/jpeg', 'image/png', 'image/webp'].includes(contentType)) continue;
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(contentType)) return null;
     const bytes = Buffer.from(await response.arrayBuffer());
-    if (bytes.length > 500_000) continue;
-    images.push({ type: 'image_url', image_url: { url: `data:${contentType};base64,${bytes.toString('base64')}`, detail: 'low' } });
-  }
-  return images;
+    if (bytes.length > 500_000) return null;
+    return { type: 'image_url', image_url: { url: `data:${contentType};base64,${bytes.toString('base64')}`, detail: 'low' } };
+  }))).filter(Boolean);
 }
 
 async function callModel(prompt, photoPaths, briefId) {
