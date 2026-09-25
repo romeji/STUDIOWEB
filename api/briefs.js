@@ -3,7 +3,8 @@ const MAX_IMAGE_BYTES = 500_000;
 const allowedTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
 const crypto = require('node:crypto');
 const { sendTransactionalEmail, receivedEmail, recordSentEmail } = require('./_lib/transactional-email');
-const { requireAdmin } = require('./_lib/admin-auth');
+const { sendBriefNotification, loadBriefPhotos } = require('./_lib/brief-notification');
+const { requireAdmin, supabaseRequest } = require('./_lib/admin-auth');
 
 function respond(res, status, body) {
   res.setHeader('Cache-Control', 'no-store');
@@ -20,6 +21,21 @@ module.exports = async function handler(req, res) {
 
   try {
     const payload = req.body && typeof req.body === 'object' ? req.body : {};
+    if (payload.action === 'retry-admin-notification') {
+      if (!(await requireAdmin(req, res))) return;
+      const briefId = String(payload.briefId || '');
+      if (!/^[0-9a-f-]{36}$/i.test(briefId)) return respond(res, 400, { error: 'Identifiant de demande invalide.' });
+      try {
+        const rows = await supabaseRequest(`briefs?id=eq.${encodeURIComponent(briefId)}&select=id,company_name,contact_name,contact_email,contact_phone,plan_interest,answers,generated_prompt,photo_paths&limit=1`);
+        if (!rows?.length) return respond(res, 404, { error: 'Demande introuvable.' });
+        const photos = await loadBriefPhotos(rows[0]);
+        await sendBriefNotification(rows[0], photos);
+        return respond(res, 200, { ok: true });
+      } catch (error) {
+        console.error('Notification du nouveau brief non envoyée:', error.message);
+        return respond(res, 502, { error: error.message || 'E-mail non envoyé. Vérifiez Resend.' });
+      }
+    }
     if (payload.action === 'retry-generation') {
       if (!(await requireAdmin(req, res))) return;
       return respond(res, 410, { error: 'La génération automatique payante est désactivée. Copiez le prompt depuis le tableau de bord et utilisez votre session ChatGPT, puis collez le HTML ici.' });
@@ -119,6 +135,7 @@ module.exports = async function handler(req, res) {
     }
     emailReservation = null;
     let requestEmailSent = false;
+    let adminEmailSent = false;
     const emailPatch = {};
     try {
       const mail = receivedEmail(row);
@@ -132,12 +149,19 @@ module.exports = async function handler(req, res) {
       emailPatch.email_last_error = String(emailError.message || 'Erreur de messagerie').slice(0, 500);
     }
     try {
+      await sendBriefNotification(row, validatedPhotos);
+      adminEmailSent = true;
+    } catch (emailError) {
+      console.error('Notification du nouveau brief non envoyée:', emailError.message);
+      emailPatch.email_last_error = [emailPatch.email_last_error, `Notification JL Studio : ${String(emailError.message || 'erreur').slice(0, 300)}`].filter(Boolean).join(' · ').slice(0, 500);
+    }
+    try {
       await fetch(`${SUPABASE_URL}/rest/v1/briefs?id=eq.${encodeURIComponent(id)}`, {
         method: 'PATCH', headers: { apikey: SUPABASE_SECRET_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
         body: JSON.stringify(emailPatch)
       });
     } catch (statusError) { console.error('État du courriel de confirmation non enregistré:', statusError.message); }
-    return respond(res, 202, { ok: true, reference: id, requestEmailSent, generation: 'manual' });
+    return respond(res, 202, { ok: true, reference: id, requestEmailSent, adminEmailSent, generation: 'manual' });
   } catch (error) {
     if (emailReservation) {
       await fetch(`${SUPABASE_URL}/rest/v1/rpc/release_brief_email_demo`, {

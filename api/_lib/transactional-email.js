@@ -18,6 +18,18 @@ function receivedEmail(brief) {
   return { subject: `Votre demande est bien reçue — JL Studio Web`, html, text };
 }
 
+function briefAdminEmail(brief) {
+  const safe = value => escapeHtml(typeof value === 'string' ? value : JSON.stringify(value ?? '', null, 2));
+  const photos = brief.photo_paths?.length ? `${brief.photo_paths.length} photo(s) ajoutée(s) en pièces jointes.` : 'Aucune photo jointe.';
+  const text = `Nouvelle demande de maquette — ${brief.company_name}\nContact : ${brief.contact_name} · ${brief.contact_email} · ${brief.contact_phone || 'téléphone non renseigné'}\nFormule envisagée : ${brief.plan_interest || 'à définir'}\n${photos}\n\nRÉPONSES\n${JSON.stringify(brief.answers || {}, null, 2)}\n\nPROMPT À COPIER DANS CHATGPT\n${brief.generated_prompt || ''}`;
+  const html = shell({
+    preheader: `Nouveau brief reçu pour ${brief.company_name}. Le prompt et les photos sont inclus.`,
+    title: `Nouveau brief — ${brief.company_name}`,
+    body: `<h1 style="font-size:25px">Nouveau questionnaire reçu</h1><p style="color:#615d72;line-height:1.7"><strong>${safe(brief.company_name)}</strong> · ${safe(brief.contact_name)} · <a href="mailto:${encodeURIComponent(brief.contact_email)}">${safe(brief.contact_email)}</a> · ${safe(brief.contact_phone || 'Téléphone non renseigné')}</p><p>${safe(brief.plan_interest || 'Formule à définir')} · ${safe(photos)}</p><h2>Réponses au formulaire</h2><pre style="white-space:pre-wrap;background:#f7f6fa;padding:16px;border-radius:10px;font:13px/1.55 monospace">${safe(JSON.stringify(brief.answers || {}, null, 2))}</pre><h2>Prompt à copier dans ChatGPT</h2><pre style="white-space:pre-wrap;background:#f7f6fa;padding:16px;border-radius:10px;font:13px/1.55 monospace">${safe(brief.generated_prompt || '')}</pre><p>Le brief et les photos restent aussi consultables dans le tableau de bord.</p>`
+  });
+  return { subject: `Nouveau questionnaire — ${brief.company_name}`, html, text };
+}
+
 function previewReadyEmail(brief, previewUrl, expiresAt) {
   const name = escapeHtml(brief.contact_name || 'Bonjour');
   const company = escapeHtml(brief.company_name || 'votre activité');
@@ -86,11 +98,12 @@ async function recordSentEmail({ briefId, clientId, to, category, subject, text,
   }
 }
 
-async function sendTransactionalEmail({ to, subject, html, text, idempotencyKey, replyTo }) {
+async function sendTransactionalEmail({ to, subject, html, text, idempotencyKey, replyTo, attachments }) {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM_EMAIL;
   if (!apiKey || !from) throw new Error('Email transactionnel non configuré : ajoutez RESEND_API_KEY et RESEND_FROM_EMAIL dans Vercel.');
   const payload = { from, to: [to], subject, html, text };
+  if (attachments?.length) payload.attachments = attachments;
   const reply = replyTo || process.env.RESEND_REPLY_TO;
   if (reply) payload.reply_to = reply;
   const response = await fetch('https://api.resend.com/emails', {
@@ -103,4 +116,4 @@ async function sendTransactionalEmail({ to, subject, html, text, idempotencyKey,
   return result.id;
 }
 
-module.exports = { sendTransactionalEmail, receivedEmail, previewReadyEmail, welcomeEmail, inboundNotificationEmail, inboundAcknowledgementEmail, recordSentEmail };
+module.exports = { sendTransactionalEmail, receivedEmail, briefAdminEmail, previewReadyEmail, welcomeEmail, inboundNotificationEmail, inboundAcknowledgementEmail, recordSentEmail };
