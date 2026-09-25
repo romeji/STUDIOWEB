@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#171329">
+  <title>Contact — JL Studio Web, Dijon</title>
+  <meta name="description" content="Contactez JL Studio à Dijon pour parler de votre site vitrine.">
+  <style>
+    :root{color-scheme:light;--ink:#211d32;--muted:#686579;--line:#e4e0ef;--purple:#6751bd;--soft:#f8f6fc;--card:#fff}*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#f2effb 0,#fff 460px);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink)}a{color:var(--purple)}.top{max-width:1080px;margin:auto;padding:24px 22px;display:flex;align-items:center;justify-content:space-between}.brand{font-weight:850;color:var(--ink);text-decoration:none;font-size:1.18rem}.wrap{width:min(1020px,calc(100% - 32px));margin:24px auto 72px}.intro{text-align:center;max-width:720px;margin:0 auto 28px}.intro h1{font-size:clamp(2rem,5vw,3.3rem);line-height:1.1;margin:.2em 0}.intro p{color:var(--muted)}.contact-layout{display:grid;grid-template-columns:.8fr 1.2fr;gap:22px;align-items:start}.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:clamp(22px,4vw,34px);box-shadow:0 16px 50px #2e245010}.card h2{margin:0 0 14px;font-size:1.35rem}.info p{color:var(--muted);margin:12px 0}.info strong{color:var(--ink)}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.field{display:grid;gap:6px}.field.full{grid-column:1/-1}label{font-weight:650;font-size:.94rem}input,select,textarea{font:inherit;width:100%;padding:12px 13px;border:1px solid #d8d4e2;border-radius:10px;background:#fff;color:var(--ink)}input:focus,select:focus,textarea:focus{outline:3px solid #6751bd30;border-color:var(--purple)}textarea{min-height:140px;resize:vertical}.check{display:flex;gap:10px;align-items:flex-start;font-weight:450}.check input{width:auto;margin-top:5px;flex:none}.captcha{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.captcha code{font-weight:800;letter-spacing:.1em;background:var(--soft);padding:10px 13px;border-radius:9px}.captcha input{max-width:120px}.submit{border:0;border-radius:999px;background:var(--purple);color:white;font:inherit;font-weight:750;padding:13px 22px;cursor:pointer}.submit:hover{filter:brightness(1.08)}.note{font-size:.88rem;color:var(--muted)}.status{padding:13px;border-radius:10px;background:#f2effb;color:var(--ink)}.privacy{margin-top:24px}.privacy p{color:var(--muted)}footer{text-align:center;padding:24px;color:var(--muted)}@media(max-width:760px){.contact-layout{grid-template-columns:1fr}.top{padding:18px}.wrap{margin-top:12px}}@media(max-width:520px){.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.card{padding:21px}.captcha{align-items:stretch}.captcha input{max-width:none;flex:1}}
+  </style>
+</head>
+<body>
+  <header class="top"><a class="brand" href="/">⚡ JL Studio &lt;Web&gt;</a><a href="/">Retour à l’accueil</a></header>
+  <main class="wrap">
+    <section class="intro"><h1>Parlons de votre projet</h1><p>Une question sur les formules, votre futur site ou le questionnaire ? Je vous réponds directement, depuis Dijon.</p></section>
+    <div class="contact-layout">
+      <aside class="card info"><h2>JL Studio, à votre écoute</h2><p><strong>Horaires</strong><br>Du lundi au vendredi<br>09h00–12h00 / 14h00–18h00</p><p><strong>E-mail</strong><br><a href="mailto:jerome.lopes21@gmail.com">jerome.lopes21@gmail.com</a></p><p><strong>Adresse</strong><br>27 boulevard de l’Université<br>21000 Dijon</p><p class="note">Vous pouvez aussi me joindre au <a href="tel:0667036661">06 67 03 66 61</a>.</p></aside>
+      <section class="card"><h2>Envoyez-moi un message</h2>
+        <form id="contactForm">
+          <div class="form-grid">
+            <div class="field"><label for="nom">Nom *</label><input id="nom" name="nom" autocomplete="family-name" required></div>
+            <div class="field"><label for="prenom">Prénom *</label><input id="prenom" name="prenom" autocomplete="given-name" required></div>
+            <div class="field full"><label for="societe">Société ou enseigne</label><input id="societe" name="societe" autocomplete="organization"></div>
+            <div class="field"><label for="code_postal">Code postal *</label><input id="code_postal" name="code_postal" inputmode="numeric" autocomplete="postal-code" required pattern="[0-9]{5}" title="Saisissez un code postal à 5 chiffres"></div>
+            <div class="field"><label for="telephone">Téléphone *</label><input id="telephone" name="telephone" type="tel" autocomplete="tel" required></div>
+            <div class="field full"><label for="email">E-mail *</label><input id="email" name="email" type="email" autocomplete="email" required></div>
+            <div class="field full"><label for="activite">Votre activité *</label><input id="activite" name="activite" required></div>
+            <div class="field full"><label for="moment">Quand souhaitez-vous être contacté ?</label><select id="moment" name="moment"><option value="">Veuillez choisir une option</option><option>Matin</option><option>Après-midi</option></select></div>
+            <div class="field full"><label for="message">Message *</label><textarea id="message" name="message" required></textarea></div>
+            <div class="field full"><label for="captcha">Saisissez les caractères ci-dessous *</label><div class="captcha"><code id="captchaCode" aria-label="Code de vérification"></code><input id="captcha" name="captcha" required autocomplete="off" aria-describedby="captchaHelp"></div><span id="captchaHelp" class="note">Vérification anti-robot. Respectez les majuscules.</span></div>
+            <label class="field full check"><input type="checkbox" id="consent" required><span>J’accepte que mes données soient traitées conformément à la <a href="#politique-confidentialite">Politique de Confidentialité</a>. *</span></label>
+            <div class="field full"><button class="submit" type="submit">Préparer mon e-mail</button><p class="note">Votre messagerie s’ouvrira avec un message prérempli. Vous pourrez le vérifier puis l’envoyer. Rien n’est transmis automatiquement depuis cette page.</p><p id="formStatus" class="status" role="status" hidden></p></div>
+          </div>
+        </form>
+      </section>
+    </div>
+    <section class="card privacy" id="politique-confidentialite"><h2>Politique de confidentialité</h2><p>Les informations saisies sur cette page restent dans votre navigateur jusqu’à l’ouverture de votre messagerie. Si vous choisissez d’envoyer le message, elles seront communiquées à JL Studio afin de répondre à votre demande et d’en assurer le suivi. Elles ne sont pas utilisées pour vous inscrire à une prospection commerciale.</p><p>Les échanges sont conservés le temps nécessaire au traitement et au suivi de la demande, puis supprimés, sauf obligation légale ou nécessité de défense des droits. Pour demander l’accès, la rectification ou la suppression de vos données, écrivez à <a href="mailto:jerome.lopes21@gmail.com">jerome.lopes21@gmail.com</a>.</p><p>Le formulaire utilise une vérification anti-robot générée localement dans votre navigateur. Aucun paiement ni abonnement n’est déclenché.</p></section>
+  </main>
+  <footer>JL Studio Web · Dijon, Bourgogne · <a href="/">Accueil</a></footer>
+  <script>
+    (()=>{const form=document.getElementById('contactForm');const codeNode=document.getElementById('captchaCode');let code='';const makeCode=()=>{const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';code=Array.from({length:5},()=>chars[Math.floor(Math.random()*chars.length)]).join('');codeNode.textContent=code};makeCode();form.addEventListener('submit',event=>{event.preventDefault();const status=document.getElementById('formStatus');status.hidden=true;if(!form.reportValidity())return;if(document.getElementById('captcha').value.trim().toUpperCase()!==code){status.textContent='Le code de vérification ne correspond pas. Réessayez avec le code affiché.';status.hidden=false;document.getElementById('captcha').value='';makeCode();return}const values=new FormData(form);const subject=`Demande de contact JL Studio — ${values.get('prenom')} ${values.get('nom')}`;const body=[`Nom : ${values.get('nom')}`,`Prénom : ${values.get('prenom')}`,`Société ou enseigne : ${values.get('societe')||'Non renseigné'}`,`Code postal : ${values.get('code_postal')}`,`Téléphone : ${values.get('telephone')}`,`E-mail : ${values.get('email')}`,`Activité : ${values.get('activite')}`,`Moment souhaité : ${values.get('moment')||'Sans préférence'}`,'',`Message :`,values.get('message')].join('\n');status.textContent='Votre messagerie va s’ouvrir avec le message préparé. Pensez à vérifier son contenu puis à cliquer sur Envoyer.';status.hidden=false;window.location.href=`mailto:jerome.lopes21@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`})})();
+  </script>
+</body>
+</html>

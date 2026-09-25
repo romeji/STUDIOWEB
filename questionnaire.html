@@ -99,7 +99,7 @@
           <div class="field"><label for="user_name">Votre nom *</label><input id="user_name" name="user_name" required autocomplete="name" placeholder="Prénom et nom"></div>
           <div class="field"><label for="user_email">Votre email *</label><input id="user_email" name="user_email" required type="email" autocomplete="email" placeholder="vous@entreprise.fr"></div>
           <div class="field"><label for="user_phone">Votre téléphone <span class="optional">(facultatif)</span></label><input id="user_phone" name="user_phone" type="tel" autocomplete="tel" placeholder="06 12 34 56 78"></div>
-          <div class="field"><label for="formula">Quelle formule vous intéresse ? *</label><select id="formula" name="formula" required><option value="">Choisissez une formule</option><option value="essentiel">Essentiel — 1 page · 59 € TTC/mois + 199 € TTC de création</option><option value="standard">Standard — jusqu’à 4 pages · 89 € TTC/mois + 149 € TTC de création</option><option value="complete">Complète — jusqu’à 6 pages ou plus · 129 € TTC/mois + 99 € TTC de création · 5 retouches/mois</option><option value="conseil">Je souhaite être conseillé</option></select></div>
+          <div class="field"><label for="formula">Quelle formule vous intéresse ? *</label><select id="formula" name="formula" required><option value="">Choisissez une formule</option><option value="essentiel">Essentiel — 1 page · 49 € TTC/mois + 199 € TTC de création</option><option value="standard">Standard — jusqu’à 3 pages maximum · 89 € TTC/mois + 149 € TTC de création</option><option value="complete">Complète — jusqu’à 6 pages ou plus · 129 € TTC/mois + 99 € TTC de création · retouches illimitées</option><option value="conseil">Je souhaite être conseillé</option></select></div>
           <div class="field"><label for="message">Une précision pour votre projet <span class="optional">(facultatif)</span></label><textarea id="message" name="message" placeholder="Ajoutez ici toute information utile"></textarea></div>
           <label class="consent"><input id="briefConsent" name="briefConsent" type="checkbox" required><span>Je demande la préparation d’un premier aperçu et confirme que les informations fournies peuvent être utilisées pour étudier mon projet. *</span></label>
           <p class="fine">Votre demande ne vaut ni commande ni abonnement. Vous pourrez envoyer vos demandes de modifications en répondant à l’email qui accompagnera votre premier aperçu.</p>
@@ -133,9 +133,9 @@
       const formula = document.getElementById('formula');
       let current = 0;
       const planNames = {
-        essentiel:'Essentiel — 1 page · 59 € TTC/mois + 199 € TTC de création',
-        standard:'Standard — jusqu’à 4 pages · 89 € TTC/mois + 149 € TTC de création',
-        complete:'Complète — jusqu’à 6 pages ou plus · 129 € TTC/mois + 99 € TTC de création · 5 retouches/mois',
+        essentiel:'Essentiel — 1 page · 49 € TTC/mois + 199 € TTC de création',
+        standard:'Standard — jusqu’à 3 pages maximum · 89 € TTC/mois + 149 € TTC de création',
+        complete:'Complète — jusqu’à 6 pages ou plus · 129 € TTC/mois + 99 € TTC de création · retouches illimitées',
         conseil:'Le client souhaite être conseillé sur la formule'
       };
       const queryPlan = new URLSearchParams(location.search).get('formule');
