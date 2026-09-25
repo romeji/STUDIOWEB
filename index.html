@@ -2492,7 +2492,7 @@
         const revealTargets = document.querySelectorAll('.section-title, .what-is-card, .benefit-card, .values-section p, .timeline-item, .trust-stat, .example-card, .offer-box, .pricing-card, .faq-item, .contact-container');
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         if (!prefersReducedMotion && 'IntersectionObserver' in window) {
-            revealTargets.forEach((element, index) => {
+            revealTargets.forEach(element => {
                 element.classList.add('scroll-reveal');
                 const groupIndex = [...element.parentElement.children].filter(sibling => sibling.matches('.section-title, .what-is-card, .benefit-card, .values-section p, .timeline-item, .trust-stat, .example-card, .offer-box, .pricing-card, .faq-item, .contact-container')).indexOf(element);
                 element.style.setProperty('--reveal-delay', `${Math.max(0, groupIndex) * 85}ms`);
@@ -2503,10 +2503,6 @@
                         const element = entry.target;
                         element.classList.add('is-visible');
                         observer.unobserve(element);
-                        window.setTimeout(() => {
-                            element.classList.remove('scroll-reveal', 'is-visible');
-                            element.style.removeProperty('--reveal-delay');
-                        }, 1000);
                     }
                 });
             }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
