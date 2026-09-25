@@ -25,6 +25,15 @@ Une demande de questionnaire est enregistrée dans `briefs`, avec son prompt et 
 - Les notifications WhatsApp ne sont pas actives : il faut choisir/configurer l’API Meta ou un prestataire, obtenir les identifiants et, pour un message proactif, un modèle de notification conforme approuvé.
 - L’aperçu du site du client n’est pas encore généré, publié ni envoyé automatiquement ; cette première étape de création reste manuelle.
 
+## 4. Paiement Stripe (mode test par défaut)
+
+- Dans Vercel, ajouter `STRIPE_MODE=test` et une clé Stripe restreinte de test `STRIPE_SECRET_KEY`. Le code refuse une clé live tant que `STRIPE_MODE` reste à `test`.
+- Permissions minimales de cette clé pour le flux actuel : lire/créer les produits et tarifs, créer des Checkout Sessions, lire et modifier les abonnements. Ne pas la placer dans le dépôt ni dans un fichier public.
+- Depuis **Developers → Webhooks** du compte Stripe en mode test, ajouter `https://studioweb-eta.vercel.app/api/stripe/webhook`. Sélectionner `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`, `customer.subscription.paused`, `customer.subscription.resumed`, `invoice.paid` et `invoice.payment_failed`. Ajouter la signature `whsec_…` au projet Vercel sous `STRIPE_WEBHOOK_SECRET`.
+- Après configuration, le bouton **Créer lien Stripe** d’une fiche client en attente crée une session Stripe Checkout. Les produits Essentiel, Standard et Complète, leurs tarifs mensuels (49 €, 89 €, 129 €) et leurs frais de création uniques (199 €, 149 €, 99 €) sont créés ou retrouvés automatiquement en mode test. Les frais de création sont facturés sur la première facture d’abonnement.
+- Le dashboard ne marque le client actif qu’après confirmation Stripe via webhook. Le lien de paiement expire après 24 heures. Le bouton d’e-mail prépare un message dans la messagerie, sans l’envoyer automatiquement.
+- Avant de passer en live, remplacez la clé test par une clé restreinte live, réglez `STRIPE_MODE=live`, créez un webhook live séparé et configurez sa signature dans Vercel. Vérifier aussi la fiscalité française avec le comptable ; Stripe Tax ne doit pas être activé sans inscription fiscale applicable.
+
 ## Points de contrôle avant collecte réelle
 
 - Compléter les champs signalés dans `mentions-legales.html` et `politique-confidentialite.html` avec les données juridiques exactes et une durée de conservation réellement appliquée.

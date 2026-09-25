@@ -1,4 +1,5 @@
 const ADMIN_EMAIL = 'lopes.jerome21@gmail.com';
+const { stripeRequest } = require('../_lib/stripe-billing');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
@@ -19,9 +20,11 @@ module.exports = async function handler(req, res) {
     if (!result.ok) throw new Error('Lecture de l’abonnement impossible.');
     const [client] = await result.json();
     if (!client || client.provider !== 'stripe' || !client.provider_subscription_id) return res.status(409).json({ error: 'Cet abonnement n’est pas lié à Stripe. Contactez le client et clôturez son dossier après confirmation.' });
-    const stripe = await fetch(`https://api.stripe.com/v1/subscriptions/${encodeURIComponent(client.provider_subscription_id)}`, { method: 'DELETE', headers: { Authorization: `Bearer ${STRIPE_SECRET_KEY}` } });
-    const stripeResult = await stripe.json();
-    if (!stripe.ok) return res.status(502).json({ error: stripeResult.error?.message || 'Stripe n’a pas confirmé la résiliation.' });
+    try {
+      await stripeRequest(`subscriptions/${encodeURIComponent(client.provider_subscription_id)}`, { method: 'DELETE' });
+    } catch (stripeError) {
+      return res.status(502).json({ error: stripeError.message || 'Stripe n’a pas confirmé la résiliation.' });
+    }
     const update = await fetch(`${SUPABASE_URL}/rest/v1/clients?id=eq.${encodeURIComponent(clientId)}`, { method: 'PATCH', headers: { ...dbHeaders, 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify({ subscription_status: 'canceled', canceled_at: new Date().toISOString() }) });
     if (!update.ok) throw new Error('Stripe a confirmé la résiliation, mais la fiche Supabase n’a pas pu être mise à jour.');
     return res.status(200).json({ ok: true });
