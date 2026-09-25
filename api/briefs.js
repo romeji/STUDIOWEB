@@ -1,7 +1,7 @@
 const MAX_TOTAL_IMAGE_BYTES = 2_500_000;
 const MAX_IMAGE_BYTES = 500_000;
 const allowedTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
-const { sendTransactionalEmail, receivedEmail } = require('./_lib/transactional-email');
+const { sendTransactionalEmail, receivedEmail, recordSentEmail } = require('./_lib/transactional-email');
 
 function respond(res, status, body) {
   res.setHeader('Cache-Control', 'no-store');
@@ -81,7 +81,9 @@ module.exports = async function handler(req, res) {
     let requestEmailSent = false;
     const emailPatch = {};
     try {
-      await sendTransactionalEmail({ to: email, ...receivedEmail(row), idempotencyKey: `request-received-${id}` });
+      const mail = receivedEmail(row);
+      const providerId = await sendTransactionalEmail({ to: email, ...mail, idempotencyKey: `request-received-${id}` });
+      await recordSentEmail({ briefId: id, to: email, category: 'questionnaire-received', ...mail, providerId });
       requestEmailSent = true;
       emailPatch.request_email_sent_at = new Date().toISOString();
       emailPatch.email_last_error = null;

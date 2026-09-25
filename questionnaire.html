@@ -57,6 +57,7 @@
     button { border:0; border-radius:12px; min-height:48px; padding:12px 20px; font:inherit; font-weight:700; cursor:pointer; }
     .primary { margin-left:auto; background:var(--accent); color:#fff; box-shadow:0 7px 18px #6658c832; }
     .secondary { background:#f1f1f7; color:var(--ink); }
+    #domainStatus[data-availability="probably_available"]{color:#137653;font-weight:700}#domainStatus[data-availability="registered"]{color:#825c16;font-weight:700}
     button:focus-visible,a:focus-visible { outline:3px solid #a79cf0; outline-offset:3px; }
     .alert { padding:16px; border-radius:12px; background:#fff6e7; color:#5d4318; margin-top:18px; }
     .success { text-align:center; }
@@ -89,6 +90,7 @@
           <div class="field"><label for="company_name">Nom de l’établissement *</label><input id="company_name" name="company_name" required autocomplete="organization" placeholder="Ex. Atelier Martin"></div>
           <div class="field"><label for="activity">Votre métier et vos services *</label><input id="activity" name="activity" required placeholder="Ex. salon de coiffure, coupe et coloration"></div>
           <div class="field"><label for="city">Votre ville et votre zone d’intervention *</label><input id="city" name="city" required autocomplete="address-level2" placeholder="Dijon et alentours"></div>
+          <div class="field"><label for="domain_name">Avez-vous déjà un nom de domaine ? <span class="optional">(facultatif)</span></label><p class="fine">Un nom de domaine est l’adresse que les clients tapent pour trouver votre site, par exemple <strong>mon-entreprise.fr</strong>. Vous pourrez indiquer une idée ; son achat et son renouvellement dépendent de sa disponibilité et du registrar choisi.</p><div style="display:flex;gap:9px;flex-wrap:wrap"><input id="domain_name" name="domain_name" placeholder="mon-entreprise.fr" autocomplete="off" style="flex:1;min-width:190px"><button id="checkDomain" type="button" class="secondary">Vérifier</button></div><input type="hidden" name="domain_check" id="domainCheckValue"><p id="domainStatus" class="fine" role="status" aria-live="polite" hidden></p></div>
           <div class="field"><label for="highlights">Qu’aimeriez-vous mettre en avant ? <span class="optional">(facultatif)</span></label><textarea id="highlights" name="highlights" placeholder="Votre spécialité, votre approche ou votre savoir-faire…"></textarea></div>
         </fieldset>
         <fieldset data-step="1" hidden><legend>Vos prestations et vos clients</legend><p class="hint">Pas besoin de tout écrire : les informations manquantes pourront être complétées ensuite.</p>
@@ -141,6 +143,20 @@
       const photoInput = document.getElementById('photos');
       const status = document.getElementById('status');
       const formula = document.getElementById('formula');
+      document.getElementById('checkDomain').addEventListener('click', async () => {
+        const input = document.getElementById('domain_name'), output = document.getElementById('domainStatus'), button = document.getElementById('checkDomain');
+        if (!input.value.trim()) { input.focus(); output.textContent = 'Saisissez un nom complet, par exemple mon-entreprise.fr.'; output.hidden = false; return; }
+        button.disabled = true; button.textContent = 'Vérification…'; output.hidden = true;
+        try {
+          const response = await fetch('/api/domains/check', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ domain: input.value }) });
+          const result = await response.json(); if (!response.ok) throw new Error(result.error || 'Vérification impossible.');
+          document.getElementById('domainCheckValue').value = result.availability;
+          output.textContent = result.message; output.dataset.availability = result.availability || 'unknown'; output.hidden = false;
+          if (result.domain) input.value = result.domain;
+        } catch (error) { document.getElementById('domainCheckValue').value = 'unknown'; output.dataset.availability = 'unknown'; output.textContent = error.message; output.hidden = false; }
+        finally { button.disabled = false; button.textContent = 'Vérifier'; }
+      });
+      document.getElementById('domain_name').addEventListener('input', () => { document.getElementById('domainCheckValue').value = ''; document.getElementById('domainStatus').hidden = true; });
       photoInput.addEventListener('change', () => {
         if (photoInput.files.length > 6) { photoInput.value = ''; status.textContent = 'Vous pouvez joindre six photos maximum.'; status.hidden = false; }
       });
@@ -206,7 +222,7 @@
               ? 'Le client souhaite faciliter les rendez-vous mais n’a pas fourni de lien Planity. N’ajoute aucun moteur de réservation ni service tiers. Prévois une action de contact simple et signale qu’il faudra son lien Planity s’il veut la réservation en ligne.'
               : 'Aucun lien Planity ni demande explicite de réservation en ligne n’a été fourni. N’ajoute aucun module de réservation. Oriente le bouton principal vers l’action choisie (appel, demande de devis ou visite).';
         const fields = [
-          ['Établissement', answers.company_name], ['Activité et services', answers.activity], ['Ville et zone desservie', answers.city],
+          ['Établissement', answers.company_name], ['Activité et services', answers.activity], ['Ville et zone desservie', answers.city], ['Nom de domaine souhaité', answers.domain_name || 'À définir'], ['Résultat indicatif du contrôle RDAP', answers.domain_check || 'Non vérifié'],
           ['Éléments à mettre en avant', answers.highlights], ['Prestations et prix fournis', answers.services], ['Clientèle recherchée', answers.audience],
           ['Objectif principal du site', answers.goal], ['Horaires fournis', answers.hours], ['Style souhaité', answers.style],
           ['Contact à afficher publiquement', answers.public_contact], ['Références visuelles', answers.references],

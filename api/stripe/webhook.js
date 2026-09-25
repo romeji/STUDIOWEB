@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 const { json, supabaseRequest } = require('../_lib/admin-auth');
 const { stripeRequest, PLANS } = require('../_lib/stripe-billing');
-const { sendTransactionalEmail, welcomeEmail } = require('../_lib/transactional-email');
+const { sendTransactionalEmail, welcomeEmail, recordSentEmail } = require('../_lib/transactional-email');
 
 module.exports.config = { api: { bodyParser: false } };
 
@@ -93,17 +93,19 @@ module.exports = async function handler(req, res) {
       && ['paid', 'no_payment_required'].includes(object.payment_status)) {
       await syncSubscription(object.subscription, object.client_reference_id || object.metadata?.client_id);
       const clientId = object.client_reference_id || object.metadata?.client_id;
-      const clients = await supabaseRequest(`clients?id=eq.${encodeURIComponent(clientId)}&select=id,company_name,contact_name,contact_email,plan,monthly_price_cents,welcome_email_sent_at`);
+      const clients = await supabaseRequest(`clients?id=eq.${encodeURIComponent(clientId)}&select=id,brief_id,company_name,contact_name,contact_email,plan,monthly_price_cents,welcome_email_sent_at`);
       const client = clients?.[0];
       const plan = PLANS[String(object.metadata?.plan || '').toLowerCase()];
       if (!client || !plan) throw new Error('Impossible de préparer le courriel de bienvenue : fiche client ou formule absente.');
       if (!client.welcome_email_sent_at) {
         try {
-          await sendTransactionalEmail({
+          const mail = welcomeEmail(client, plan, Number.isInteger(object.amount_total) ? object.amount_total : plan.monthly + plan.creation);
+          const providerId = await sendTransactionalEmail({
             to: client.contact_email,
-            ...welcomeEmail(client, plan, Number.isInteger(object.amount_total) ? object.amount_total : plan.monthly + plan.creation),
+            ...mail,
             idempotencyKey: `payment-welcome-${object.id}`
           });
+          await recordSentEmail({ briefId: client.brief_id, clientId: client.id, to: client.contact_email, category: 'payment-welcome', ...mail, providerId });
         } catch (emailError) {
           try {
             await supabaseRequest(`clients?id=eq.${encodeURIComponent(client.id)}`, {

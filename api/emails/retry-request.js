@@ -1,5 +1,5 @@
 const { json, requireAdmin, supabaseRequest } = require('../_lib/admin-auth');
-const { sendTransactionalEmail, receivedEmail } = require('../_lib/transactional-email');
+const { sendTransactionalEmail, receivedEmail, recordSentEmail } = require('../_lib/transactional-email');
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -14,7 +14,9 @@ module.exports = async function handler(req, res) {
     const brief = rows?.[0];
     if (!brief) return json(res, 404, { error: 'Demande introuvable.' });
     if (brief.request_email_sent_at) return json(res, 409, { error: 'Le courriel de confirmation est déjà marqué comme envoyé.' });
-    await sendTransactionalEmail({ to: brief.contact_email, ...receivedEmail(brief), idempotencyKey: `request-received-${brief.id}` });
+    const mail = receivedEmail(brief);
+    const providerId = await sendTransactionalEmail({ to: brief.contact_email, ...mail, idempotencyKey: `request-received-${brief.id}` });
+    await recordSentEmail({ briefId, to: brief.contact_email, category: 'questionnaire-received', ...mail, providerId });
     await supabaseRequest(`briefs?id=eq.${encodeURIComponent(brief.id)}`, {
       method: 'PATCH', headers: { Prefer: 'return=minimal' },
       body: JSON.stringify({ request_email_sent_at: new Date().toISOString(), email_last_error: null })

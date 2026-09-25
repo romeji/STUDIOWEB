@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const { json, requireAdmin, supabaseRequest } = require('../_lib/admin-auth');
-const { sendTransactionalEmail, previewReadyEmail } = require('../_lib/transactional-email');
+const { sendTransactionalEmail, previewReadyEmail, recordSentEmail } = require('../_lib/transactional-email');
 
 const SITE_URL = 'https://studioweb-eta.vercel.app';
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -33,7 +33,9 @@ module.exports = async function handler(req, res) {
     let emailError = '';
     let emailFailure = '';
     try {
-      await sendTransactionalEmail({ to: existing[0].contact_email, ...previewReadyEmail(existing[0], url, expiresAt), idempotencyKey: `preview-ready-${tokenHash}` });
+      const mail = previewReadyEmail(existing[0], url, expiresAt);
+      const providerId = await sendTransactionalEmail({ to: existing[0].contact_email, ...mail, idempotencyKey: `preview-ready-${tokenHash}` });
+      await recordSentEmail({ briefId, to: existing[0].contact_email, category: 'preview-ready', ...mail, providerId });
       previewEmailSent = true;
     } catch (error) {
       emailError = 'Le lien est créé, mais le courriel automatique n’a pas été envoyé. Vérifiez la configuration Resend et réessayez.';

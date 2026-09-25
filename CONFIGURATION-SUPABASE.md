@@ -18,7 +18,7 @@ L’interface `/admin` s’appuie sur Supabase Auth, Postgres et Storage. Les r�
 
 Une demande de questionnaire est enregistrée dans `briefs`, avec son prompt et des chemins privés vers les photos. Le tableau de bord crée des URL de photo à durée limitée. Les prospects, clients et retouches sont gérés sous authentification et RLS. Le compteur de retouches représente les entrées enregistrées depuis le premier jour du mois courant. Le point d’accès public du questionnaire applique une limite de cinq envois par adresse réseau et par heure ; seul un condensat de l’adresse est conservé dans la table de limitation et ses entrées expirent après 48 heures.
 
-Pour le nouvel aperçu privé et le parcours de paiement, exécuter aussi `supabase-maquette-paiements.sql` dans le SQL Editor, y compris si le schéma principal a déjà été installé. Le script est réexécutable et ajoute les états d’envoi des e-mails. Le HTML complet est conservé dans `briefs.generated_site_html`; le lien envoyé au client est un jeton aléatoire dont seul le condensat est stocké et expire au bout de 30 jours. Le code est renvoyé au navigateur uniquement après validation de ce jeton. L’iframe est sandboxée et le contenu client n’hérite d’aucun CSS de JL Studio.
+Pour le nouvel aperçu privé et le parcours de paiement, exécuter aussi `supabase-maquette-paiements.sql` dans le SQL Editor, y compris si le schéma principal a déjà été installé. Le script est réexécutable et ajoute les états d’envoi des e-mails. Pour la boîte de réception des formulaires, les demandes de correction et l’historique client, exécuter ensuite `supabase-client-communications.sql`. Le HTML complet est conservé dans `briefs.generated_site_html`; le lien envoyé au client est un jeton aléatoire dont seul le condensat est stocké et expire au bout de 30 jours. Le code est renvoyé au navigateur uniquement après validation de ce jeton. L’iframe est sandboxée et le contenu client n’hérite d’aucun CSS de JL Studio.
 
 ## 3. Courriels transactionnels (Resend)
 
@@ -31,6 +31,8 @@ Dans Vercel → Project → Settings → Environment Variables, ajouter pour Pro
 Vérifier le domaine expéditeur dans Resend et publier ses enregistrements DNS SPF/DKIM avant l’envoi aux prospects. `onboarding@resend.dev` est réservé aux essais autorisés par Resend, pas à la production. Après avoir ajouté/modifié ces variables, redéployer Vercel.
 
 Le serveur envoie automatiquement : la confirmation questionnaire avec le délai annoncé de 48 h maximum, le lien privé dès l’enregistrement de l’aperçu depuis `/admin`, puis le récapitulatif de formule et du premier règlement après confirmation Stripe. Les erreurs d’envoi questionnaire/aperçu sont visibles dans le dossier brief; un bouton permet de renvoyer la confirmation. Renouveler l’aperçu relance son message. Stripe réessaie son webhook si l’e-mail de bienvenue échoue. Les justificatifs de paiement restent ceux de Stripe.
+
+Les messages du formulaire de contact et de correction de maquette sont transmis à `lopes.jerome21@gmail.com`, un accusé de réception est envoyé à l’auteur, et les deux catégories apparaissent dans **Admin → Messages**. Les courriels sortants associés au brief/client sont enregistrés et consultables dans l’historique de sa fiche.
 
 ## 4. Fonctions nécessitant encore une configuration tierce
 

@@ -47,12 +47,52 @@ function welcomeEmail(client, plan, firstAmountCents) {
   return { subject: `Bienvenue chez JL Studio — ${company}`, html, text };
 }
 
-async function sendTransactionalEmail({ to, subject, html, text, idempotencyKey }) {
+function inboundNotificationEmail(message) {
+  const title = message.kind === 'correction' ? 'Demande de correction sur une maquette' : 'Nouveau message depuis le formulaire de contact';
+  const fields = [
+    ['Nom', message.name], ['Entreprise', message.company_name], ['Adresse e-mail', message.email],
+    ['Téléphone', message.phone], ['Code postal', message.postal_code], ['Activité', message.activity],
+    ['Moment souhaité', message.callback_time]
+  ].filter(([, value]) => value);
+  const rows = fields.map(([label, value]) => `<tr><td style="padding:5px 10px 5px 0;color:#777187">${escapeHtml(label)}</td><td style="padding:5px 0"><strong>${escapeHtml(value)}</strong></td></tr>`).join('');
+  return {
+    subject: `JL Studio — ${title}`,
+    html: shell({ preheader: title, title, body: `<h1 style="font-size:24px">${escapeHtml(title)}</h1><table role="presentation" style="line-height:1.5">${rows}</table><div style="margin-top:20px;padding:16px;border-radius:12px;background:#f5f3ff;white-space:pre-wrap;line-height:1.65">${escapeHtml(message.message)}</div><p>Le message est aussi consultable dans le tableau de bord JL Studio.</p>` }),
+    text: `${title}\n\n${fields.map(([label, value]) => `${label} : ${value}`).join('\n')}\n\nMessage :\n${message.message}`
+  };
+}
+
+function inboundAcknowledgementEmail(message) {
+  const name = escapeHtml(message.name || 'Bonjour');
+  const correction = message.kind === 'correction';
+  const title = correction ? 'Votre demande de correction est bien reçue' : 'Votre message est bien reçu';
+  const text = `Bonjour ${message.name || ''},\n\n${correction ? 'J’ai bien reçu votre demande de correction pour la maquette. Je vais en prendre connaissance et reviendrai vers vous.' : 'J’ai bien reçu votre message. Je vais en prendre connaissance et reviendrai vers vous dans les meilleurs délais.'}\n\nJérôme — JL Studio Web\nDijon, Bourgogne`;
+  return { subject: `${title} — JL Studio Web`, text, html: shell({ preheader: title, title, body: `<h1 style="font-size:25px">${name}, ${escapeHtml(title.toLowerCase())}.</h1><p style="color:#615d72;line-height:1.7">${correction ? 'J’ai bien reçu votre demande concernant votre maquette. Je vais en prendre connaissance et reviendrai vers vous.' : 'J’ai bien reçu votre message. Je vais en prendre connaissance et reviendrai vers vous dans les meilleurs délais.'}</p>` }) };
+}
+
+async function recordSentEmail({ briefId, clientId, to, category, subject, text, providerId }) {
+  const { SUPABASE_URL, SUPABASE_SECRET_KEY } = process.env;
+  if (!SUPABASE_URL || !SUPABASE_SECRET_KEY) return false;
+  try {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/client_emails`, {
+      method: 'POST', headers: { apikey: SUPABASE_SECRET_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify({ brief_id: briefId || null, client_id: clientId || null, recipient_email: to, category, subject, body_text: String(text || '').slice(0, 12000), provider_message_id: providerId || null, status: 'sent' })
+    });
+    if (!response.ok) throw new Error(`Supabase ${response.status}`);
+    return true;
+  } catch (error) {
+    console.error('Historique du courriel non enregistré:', error.message);
+    return false;
+  }
+}
+
+async function sendTransactionalEmail({ to, subject, html, text, idempotencyKey, replyTo }) {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM_EMAIL;
   if (!apiKey || !from) throw new Error('Email transactionnel non configuré : ajoutez RESEND_API_KEY et RESEND_FROM_EMAIL dans Vercel.');
   const payload = { from, to: [to], subject, html, text };
-  if (process.env.RESEND_REPLY_TO) payload.reply_to = process.env.RESEND_REPLY_TO;
+  const reply = replyTo || process.env.RESEND_REPLY_TO;
+  if (reply) payload.reply_to = reply;
   const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json', 'Idempotency-Key': `jlstudio-${idempotencyKey}` },
@@ -63,4 +103,4 @@ async function sendTransactionalEmail({ to, subject, html, text, idempotencyKey 
   return result.id;
 }
 
-module.exports = { sendTransactionalEmail, receivedEmail, previewReadyEmail, welcomeEmail };
+module.exports = { sendTransactionalEmail, receivedEmail, previewReadyEmail, welcomeEmail, inboundNotificationEmail, inboundAcknowledgementEmail, recordSentEmail };
