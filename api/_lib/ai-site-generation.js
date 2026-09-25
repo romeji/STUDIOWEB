@@ -3,7 +3,7 @@ const { supabaseRequest } = require('./admin-auth');
 const { sendTransactionalEmail, previewReadyEmail, recordSentEmail } = require('./transactional-email');
 
 const SITE_URL = 'https://studioweb-eta.vercel.app';
-const MODEL = process.env.AI_SITE_MODEL || 'gpt-6-sol';
+const MODEL = process.env.AI_SITE_MODEL || 'gpt-6-luna';
 const MAX_HTML_BYTES = 1_800_000;
 const AI_TIMEOUT_MS = 40_000;
 const MAX_OUTPUT_TOKENS = 12_000;
