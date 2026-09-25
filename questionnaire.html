@@ -50,6 +50,7 @@
     input:focus,select:focus,textarea:focus { border-color:var(--accent); box-shadow:0 0 0 3px #6658c81c; }
     .optional { color:var(--muted); font-weight:450; }
     .fine { color:var(--muted); font-size:.88rem; }
+    .upload-note { margin-top:6px; }
     .consent { display:flex; align-items:flex-start; gap:10px; font-size:.92rem; font-weight:500; }
     .consent input { margin-top:5px; flex:none; accent-color:var(--accent); }
     .actions { display:flex; justify-content:space-between; gap:12px; margin-top:25px; }
@@ -101,6 +102,7 @@
           <div class="field"><label for="booking">Lien de réservation existant <span class="optional">(facultatif)</span></label><input id="booking" name="booking" type="url" placeholder="https://…"></div>
           <div class="field"><label for="public_contact">Téléphone ou email à afficher sur le site <span class="optional">(facultatif)</span></label><input id="public_contact" name="public_contact" placeholder="Coordonnées publiques uniquement"></div>
           <div class="field"><label for="references">Un site ou une ambiance que vous aimez <span class="optional">(facultatif)</span></label><input id="references" name="references" placeholder="Un lien ou quelques mots pour décrire ce qui vous plaît"></div>
+          <div class="field"><label for="photos">Quelques images pour guider la maquette <span class="optional">(facultatif, 6 maximum)</span></label><input id="photos" name="photos" type="file" accept="image/jpeg,image/png,image/webp" multiple><p class="fine upload-note">Photos de votre établissement, réalisations ou ambiance souhaitée. JPG, PNG ou WebP ; elles seront réduites avant l’envoi.</p></div>
         </fieldset>
         <fieldset data-step="3" hidden><legend>Vos coordonnées et votre formule</legend><p class="hint">Je vous enverrai votre premier aperçu par email. Aucun paiement n’est demandé pour cette étape.</p>
           <div class="field"><label for="user_name">Votre nom *</label><input id="user_name" name="user_name" required autocomplete="name" placeholder="Prénom et nom"></div>
@@ -108,16 +110,16 @@
           <div class="field"><label for="user_phone">Votre téléphone <span class="optional">(facultatif)</span></label><input id="user_phone" name="user_phone" type="tel" autocomplete="tel" placeholder="06 12 34 56 78"></div>
           <div class="field"><label for="formula">Quelle formule vous intéresse ? *</label><select id="formula" name="formula" required><option value="">Choisissez une formule</option><option value="essentiel">Essentiel — 1 page · 49 € TTC/mois + 199 € TTC de création</option><option value="standard">Standard — jusqu’à 3 pages maximum · 89 € TTC/mois + 149 € TTC de création</option><option value="complete">Complète — jusqu’à 6 pages ou plus · 129 € TTC/mois + 99 € TTC de création · retouches illimitées</option><option value="conseil">Je souhaite être conseillé</option></select></div>
           <div class="field"><label for="message">Une précision pour votre projet <span class="optional">(facultatif)</span></label><textarea id="message" name="message" placeholder="Ajoutez ici toute information utile"></textarea></div>
-          <label class="consent"><input id="briefConsent" name="briefConsent" type="checkbox" required><span>Je demande la préparation d’un premier aperçu et confirme que les informations fournies peuvent être utilisées pour étudier mon projet. *</span></label>
+          <label class="consent"><input id="briefConsent" name="briefConsent" type="checkbox" required><span>Je demande la préparation d’un premier aperçu et confirme que mes informations et photos peuvent être utilisées pour étudier et suivre mon projet, comme indiqué dans la <a href="/politique-confidentialite" target="_blank" rel="noopener">politique de confidentialité</a>. *</span></label>
           <p class="fine">Votre demande ne vaut ni commande ni abonnement. Vous pourrez envoyer vos demandes de modifications en répondant à l’email qui accompagnera votre premier aperçu.</p>
         </fieldset>
         <div class="actions"><button class="secondary" id="prevButton" type="button" hidden>Retour</button><button class="primary" id="nextButton" type="button">Continuer</button><button class="primary" id="submitButton" type="submit" hidden>Envoyer mon questionnaire</button></div>
       </form>
       <div id="status" class="alert" role="status" hidden></div>
     </section>
-    <section class="card success" id="successCard" hidden aria-live="polite"><h2>Merci, votre questionnaire a bien été transmis à JL Studio.</h2><p>Je vais lire votre brief et préparer manuellement un premier aperçu adapté à votre activité. Vous recevrez ensuite un e-mail avec son lien pour le consulter.</p><div class="offer"><strong>Votre formule envisagée :</strong><p id="selectedOffer"></p></div><p>Après votre retour, nous pourrons ajuster la maquette et confirmer ensemble la formule, le périmètre et les modalités. Aucun paiement ni abonnement n’est déclenché par ce questionnaire.</p><a class="primary" style="display:inline-block;text-decoration:none;padding:12px 20px;border-radius:12px;color:white" href="/">Retour au site JL Studio</a> <a class="primary" style="display:inline-block;text-decoration:none;padding:12px 20px;border-radius:12px;color:white" href="/contact">Nous contacter</a></section>
+    <section class="card success" id="successCard" hidden aria-live="polite"><h2>Merci, votre questionnaire a bien été transmis à JL Studio.</h2><p>Je vais lire votre brief et préparer manuellement un premier aperçu adapté à votre activité. Vous recevrez ensuite un e-mail avec son lien pour le consulter.</p><p class="fine" id="submissionNote"></p><div class="offer"><strong>Votre formule envisagée :</strong><p id="selectedOffer"></p></div><p>Après votre retour, nous pourrons ajuster la maquette et confirmer ensemble la formule, le périmètre et les modalités. Aucun paiement ni abonnement n’est déclenché par ce questionnaire.</p><a class="primary" style="display:inline-block;text-decoration:none;padding:12px 20px;border-radius:12px;color:white" href="/">Retour au site JL Studio</a> <a class="primary" style="display:inline-block;text-decoration:none;padding:12px 20px;border-radius:12px;color:white" href="/contact">Nous contacter</a></section>
   </main>
-  <footer>Besoin d’aide ? <a href="https://www.instagram.com/_romeji/" target="_blank" rel="noopener noreferrer">Écrivez-moi sur Instagram</a> · <a href="tel:0667036661">06 67 03 66 61</a> · <a href="mailto:lopes.jerome21@gmail.com">lopes.jerome21@gmail.com</a></footer>
+  <footer>Besoin d’aide ? <a href="https://www.instagram.com/_romeji/" target="_blank" rel="noopener noreferrer">Écrivez-moi sur Instagram</a> · <a href="tel:0667036661">06 67 03 66 61</a> · <a href="mailto:lopes.jerome21@gmail.com">lopes.jerome21@gmail.com</a><br><a href="/politique-confidentialite">Politique de confidentialité</a> · <a href="/mentions-legales">Mentions légales</a></footer>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script>
     (() => {
@@ -136,8 +138,31 @@
       const prev = document.getElementById('prevButton');
       const next = document.getElementById('nextButton');
       const submit = document.getElementById('submitButton');
+      const photoInput = document.getElementById('photos');
       const status = document.getElementById('status');
       const formula = document.getElementById('formula');
+      photoInput.addEventListener('change', () => {
+        if (photoInput.files.length > 6) { photoInput.value = ''; status.textContent = 'Vous pouvez joindre six photos maximum.'; status.hidden = false; }
+      });
+      function compressPhoto(file) {
+        return new Promise((resolve, reject) => {
+          const image = new Image();
+          const source = URL.createObjectURL(file);
+          image.onload = () => {
+            const scale = Math.min(1, 1400 / Math.max(image.width, image.height));
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.max(1, Math.round(image.width * scale));
+            canvas.height = Math.max(1, Math.round(image.height * scale));
+            canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+            URL.revokeObjectURL(source);
+            const data = canvas.toDataURL('image/jpeg', .76);
+            if (Math.ceil(data.length * .75) > 500000) { reject(new Error(`La photo « ${file.name} » reste trop volumineuse après réduction. Choisissez une image plus légère.`)); return; }
+            resolve({name:file.name,type:'image/jpeg',data});
+          };
+          image.onerror = () => { URL.revokeObjectURL(source); reject(new Error(`La photo « ${file.name} » n’a pas pu être lue.`)); };
+          image.src = source;
+        });
+      }
       let current = 0;
       const planNames = {
         essentiel:'Essentiel — 1 page · 49 € TTC/mois + 199 € TTC de création',
@@ -173,6 +198,9 @@
           return;
         }
         const answers = Object.fromEntries(new FormData(form).entries());
+        delete answers.photos;
+        const selectedPhotos = [...photoInput.files];
+        if (selectedPhotos.length > 6) { status.textContent = 'Vous pouvez joindre six photos maximum.'; status.hidden = false; return; }
         const bookingUrl = (answers.booking || '').trim();
         const planityUrl = bookingUrl && /(^|\.)planity\.com(\/|$)/i.test(new URL(bookingUrl).hostname) ? bookingUrl : '';
         const bookingRules = planityUrl
@@ -197,19 +225,39 @@
         messageField.value = `${originalMessage}${originalMessage ? '\n\n' : ''}--- BRIEF DE CRÉATION POUR LA PREMIÈRE PROPOSITION ---\n${prompt}`;
         submit.disabled = true;
         submit.textContent = 'Envoi en cours…';
+        let savedReference = '';
+        let databaseWarning = '';
         try {
+          const photos = [];
+          for (const photo of selectedPhotos) photos.push(await compressPhoto(photo));
+          const saved = await fetch('/api/briefs', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({answers,prompt,photos,consent:document.getElementById('briefConsent').checked})});
+          const saveResult = await saved.json();
+          if (!saved.ok && saved.status === 503) databaseWarning = 'Supabase reste à configurer : les réponses sont transmises par e-mail à JL Studio, mais les photos ne sont pas encore enregistrées dans le tableau de bord.';
+          else if (!saved.ok) throw new Error(saveResult.error || 'Le dossier n’a pas pu être enregistré.');
+          else savedReference = saveResult.reference || 'enregistrée';
           window.emailjs.init('CYp7N-IF4P4kOd2iL');
+          photoInput.disabled = true;
           await window.emailjs.sendForm('service_nubowcp','template_afutqdp',form);
+          document.getElementById('submissionNote').textContent = databaseWarning;
           document.getElementById('selectedOffer').textContent = planNames[answers.formula] || answers.formula;
           document.getElementById('formCard').hidden = true;
           document.getElementById('successCard').hidden = false;
           window.scrollTo({top:0,behavior:'smooth'});
         } catch (error) {
           console.error('Échec de l’envoi du questionnaire', error);
-          status.textContent = 'L’envoi a échoué. Vérifiez votre connexion puis réessayez. Vos réponses sont encore affichées dans le formulaire.';
-          status.hidden = false;
+          if (savedReference) {
+            document.getElementById('submissionNote').textContent = 'Votre demande est bien enregistrée dans mon espace de suivi. La notification par e-mail est temporairement indisponible ; je retrouverai tout de même votre dossier.';
+            document.getElementById('selectedOffer').textContent = planNames[answers.formula] || answers.formula;
+            formCard.hidden = true;
+            document.getElementById('successCard').hidden = false;
+            window.scrollTo({top:0,behavior:'smooth'});
+          } else {
+            status.textContent = `${error.message || 'L’envoi a échoué.'} Vos réponses restent affichées dans le formulaire.`;
+            status.hidden = false;
+          }
         } finally {
           messageField.value = originalMessage;
+          photoInput.disabled = false;
           submit.disabled = false;
           submit.textContent = 'Envoyer mon questionnaire';
         }

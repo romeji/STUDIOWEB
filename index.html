@@ -1128,7 +1128,7 @@
         .faq-item[open] summary::after { content:'−'; }
         .faq-item p { color:var(--text-secondary); line-height:1.65; padding:0 0 18px; }
         .faq-item summary:focus-visible { outline:3px solid var(--accent-primary); outline-offset:3px; }
-        @media (max-width:760px) { .faq-grid { grid-template-columns:1fr; } .values-section .container { grid-template-columns:1fr; } .values-section .section-title,.values-section p { grid-column:1; grid-row:auto; } .hero-content { padding-bottom:92px; } .benefits-wrap { grid-template-columns:40px minmax(0,1fr) 40px; column-gap:6px; } .benefits-controls button { width:40px; height:40px; } }
+        @media (max-width:760px) { .faq-grid { grid-template-columns:1fr; } .values-section .container { grid-template-columns:1fr; } .values-section .section-title,.values-section p { grid-column:1; grid-row:auto; } .hero-content { padding-bottom:92px; } .benefits-wrap { grid-template-columns:40px minmax(0,1fr) 40px; column-gap:6px; } .benefits-controls button { width:40px; height:40px; } .benefit-card { flex-basis:100%; scroll-snap-align:center; } .benefits { scroll-snap-type:x mandatory; } }
         /* Révélation progressive des sections au défilement */
         .scroll-reveal { opacity:0; transform:translateY(22px); transition:opacity .65s ease, transform .65s cubic-bezier(.2,.7,.2,1); transition-delay:var(--reveal-delay,0ms); animation:none !important; }
         .scroll-reveal.is-visible { opacity:1; transform:translateY(0); }
@@ -1620,6 +1620,13 @@
             padding: 60px 20px;
         }
 
+        .footer-bottom { max-width:1200px; margin:24px auto 0; display:flex; align-items:center; justify-content:space-between; gap:18px; text-align:left; }
+        .footer-bottom p { margin:0 !important; opacity:.62; }
+        .footer-legal { display:flex; align-items:center; justify-content:flex-end; gap:14px; flex-wrap:wrap; font-size:.9rem; }
+        .footer-legal a { color:inherit; opacity:.82; text-decoration:none; }
+        .footer-legal a:hover { opacity:1; text-decoration:underline; }
+        @media (max-width:600px) { .footer-bottom { flex-direction:column-reverse; text-align:center; gap:12px; } .footer-legal { justify-content:center; } }
+
         footer h3 {
             font-size: 2em;
             margin-bottom: 15px;
@@ -1834,12 +1841,16 @@
             }
 
             .pricing-card {
-                min-width: 300px;
-                max-width: 300px;
+                min-width: min(300px, calc(100vw - 48px));
+                max-width: min(300px, calc(100vw - 48px));
                 flex-shrink: 0;
                 scroll-snap-align: center;
                 padding: 26px;
+                display:flex;
+                flex-direction:column;
             }
+            .pricing-features { flex:1; }
+            .pricing-card .cta-button { margin-top:auto; }
 
             .pricing-card.featured {
                 transform: scale(1);
@@ -1946,6 +1957,7 @@
 
             .timeline-content h3 {
                 font-size: 1.2em;
+                line-height:1.25;
             }
 
             .timeline-content p {
@@ -1955,6 +1967,8 @@
             .timeline-icon {
                 font-size: 2em;
             }
+            .timeline-heading { gap:9px; }
+            .timeline-heading .timeline-icon { font-size:1.6em; }
 
             .stat-number {
                 font-size: 2.5em;
@@ -1978,6 +1992,15 @@
         .offer-terms summary:focus-visible { outline: 3px solid var(--accent-primary); outline-offset: 5px; border-radius: 3px; }
         .offer-terms-content p { margin-top: 12px; color: var(--text-secondary); }
         .pricing-card .cta-button { padding: 14px 20px; font-size: 1em; display: block; text-align: center; }
+        .timeline-heading { display:flex; align-items:center; gap:12px; }
+        .timeline-heading .timeline-icon { margin:0; flex:0 0 auto; line-height:1; }
+        .timeline-heading h3 { margin:0 0 12px; }
+        .pricing-dots { display:none; }
+        @media (max-width:760px) {
+            .pricing-dots { display:flex; justify-content:center; align-items:center; gap:10px; margin:26px auto -18px; }
+            .pricing-dots button { width:10px; height:10px; min-height:10px; padding:0; border-radius:999px; background:var(--border-color); transition:width .2s ease,background .2s ease; }
+            .pricing-dots button[aria-pressed="true"] { width:26px; background:linear-gradient(135deg,#667eea,#764ba2); }
+        }
         .trust-number { overflow-wrap: anywhere; }
         .brief-step { border: 0; padding: 0; margin: 0; min-width: 0; }
         .brief-step legend { color: var(--accent-primary); font-size: 1.35em; font-weight: 800; margin-bottom: 24px; }
@@ -2188,8 +2211,7 @@
                     <div class="timeline-item">
                         <div class="timeline-number">1</div>
                         <div class="timeline-content">
-                            <div class="timeline-icon">📋</div>
-                            <h3>Vous partagez votre projet</h3>
+                            <div class="timeline-heading"><div class="timeline-icon">📋</div><h3>Vous partagez votre projet</h3></div>
                             <p>Vous remplissez gratuitement le questionnaire pour me présenter votre activité, vos services et vos préférences. Plus vous me donnez de détails, plus la maquette pourra vous ressembler.</p>
                         </div>
                     </div>
@@ -2197,8 +2219,7 @@
                     <div class="timeline-item">
                         <div class="timeline-number">2</div>
                         <div class="timeline-content">
-                            <div class="timeline-icon">🎨</div>
-                            <h3>Je prépare votre maquette</h3>
+                            <div class="timeline-heading"><div class="timeline-icon">🎨</div><h3>Je prépare votre maquette</h3></div>
                             <p>À partir de vos réponses, je réalise gratuitement une première maquette de votre site vitrine et vous l’envoie par e-mail, sans engagement ni paiement demandé.</p>
                         </div>
                     </div>
@@ -2206,8 +2227,7 @@
                     <div class="timeline-item">
                         <div class="timeline-number">3</div>
                         <div class="timeline-content">
-                            <div class="timeline-icon">🚀</div>
-                            <h3>Vous choisissez la suite</h3>
+                            <div class="timeline-heading"><div class="timeline-icon">🚀</div><h3>Vous choisissez la suite</h3></div>
                             <p>Vous pouvez me demander quelques ajustements ou valider la formule qui vous convient. Je reprends ensuite contact avec vous pour vérifier que tout vous satisfait avant la mise en ligne.</p>
                         </div>
                     </div>
@@ -2306,7 +2326,12 @@
         <div class="container">
             <h2 class="section-title">Trois formules pour votre activité</h2>
             <p class="section-subtitle">Tous les prix affichés sont TTC. Les frais de création sont réglés une seule fois, en plus de l’abonnement mensuel.</p>
-            <div class="pricing-cards">
+            <div class="pricing-dots" id="pricingDots" aria-label="Choisir une formule">
+                <button type="button" data-pricing-index="0" aria-label="Afficher Essentiel" aria-pressed="true"></button>
+                <button type="button" data-pricing-index="1" aria-label="Afficher Standard" aria-pressed="false"></button>
+                <button type="button" data-pricing-index="2" aria-label="Afficher Complète" aria-pressed="false"></button>
+            </div>
+            <div class="pricing-cards" id="pricingCarousel">
                 <div class="pricing-card">
                     <h3>Essentiel</h3>
                     <div class="pricing-price">49 €<span class="pricing-period">/mois</span></div>
@@ -2386,8 +2411,8 @@
         <h3>⚡ JL Studio <span class="closing-tag">&lt;/Web&gt;</span></h3>
         <p>Sites vitrine par abonnement • Dès 49 €/mois + 199 € de création</p>
         <p>Créé avec passion à Dijon, au cœur de la Bourgogne.</p>
-        <p><a href="/contact">Nous contacter</a> · <a href="/contact#politique-confidentialite">Politique de confidentialité</a></p>
-        <p style="margin-top: 20px; opacity: 0.6;">© 2026 JL Studio Web. Tous droits réservés.</p>
+        <p><a href="/contact">Nous contacter</a></p>
+        <div class="footer-bottom"><p>© 2026 JL Studio Web. Tous droits réservés.</p><nav class="footer-legal" aria-label="Informations légales"><a href="/politique-confidentialite">Politique de confidentialité</a><a href="/mentions-legales">Mentions légales</a></nav></div>
     </footer>
 
     <!-- Scripts -->
@@ -2479,8 +2504,47 @@
 
         // Theme toggle
         const benefitsCarousel = document.getElementById('benefitsCarousel');
-        document.getElementById('benefitsPrev')?.addEventListener('click', () => benefitsCarousel.scrollBy({left: -Math.max(280, benefitsCarousel.clientWidth * 0.8), behavior: 'smooth'}));
-        document.getElementById('benefitsNext')?.addEventListener('click', () => benefitsCarousel.scrollBy({left: Math.max(280, benefitsCarousel.clientWidth * 0.8), behavior: 'smooth'}));
+        function moveBenefit(direction) {
+            const cards = [...benefitsCarousel.querySelectorAll('.benefit-card')];
+            if (!cards.length) return;
+            const viewportCenter = benefitsCarousel.getBoundingClientRect().left + benefitsCarousel.clientWidth / 2;
+            let current = 0;
+            cards.forEach((card, index) => {
+                const distance = Math.abs(card.getBoundingClientRect().left + card.offsetWidth / 2 - viewportCenter);
+                const currentDistance = Math.abs(cards[current].getBoundingClientRect().left + cards[current].offsetWidth / 2 - viewportCenter);
+                if (distance < currentDistance) current = index;
+            });
+            const next = Math.max(0, Math.min(cards.length - 1, current + direction));
+            const target = cards[next].getBoundingClientRect();
+            benefitsCarousel.scrollTo({left: benefitsCarousel.scrollLeft + target.left + target.width / 2 - viewportCenter, behavior:'smooth'});
+        }
+        document.getElementById('benefitsPrev')?.addEventListener('click', () => moveBenefit(-1));
+        document.getElementById('benefitsNext')?.addEventListener('click', () => moveBenefit(1));
+
+        const pricingCarousel = document.getElementById('pricingCarousel');
+        const pricingDots = [...document.querySelectorAll('[data-pricing-index]')];
+        const pricingCards = [...(pricingCarousel?.querySelectorAll('.pricing-card') || [])];
+        function setPricingDot(index) { pricingDots.forEach((dot, i) => dot.setAttribute('aria-pressed', String(i === index))); }
+        pricingDots.forEach(dot => dot.addEventListener('click', () => {
+            const index = Number(dot.dataset.pricingIndex);
+            const card = pricingCards[index];
+            if (!card || !pricingCarousel) return;
+            const box = pricingCarousel.getBoundingClientRect();
+            const rect = card.getBoundingClientRect();
+            pricingCarousel.scrollTo({left: pricingCarousel.scrollLeft + rect.left + rect.width / 2 - (box.left + box.width / 2), behavior:'smooth'});
+            setPricingDot(index);
+        }));
+        pricingCarousel?.addEventListener('scroll', () => {
+            if (window.innerWidth > 760 || !pricingCards.length) return;
+            const center = pricingCarousel.getBoundingClientRect().left + pricingCarousel.clientWidth / 2;
+            let nearest = 0;
+            pricingCards.forEach((card, index) => {
+                const distance = Math.abs(card.getBoundingClientRect().left + card.offsetWidth / 2 - center);
+                const nearestDistance = Math.abs(pricingCards[nearest].getBoundingClientRect().left + pricingCards[nearest].offsetWidth / 2 - center);
+                if (distance < nearestDistance) nearest = index;
+            });
+            setPricingDot(nearest);
+        }, {passive:true});
 
         const themeToggle = document.getElementById('themeToggle');
         const themeIcon = document.getElementById('themeIcon');
