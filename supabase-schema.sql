@@ -35,6 +35,9 @@ create table if not exists public.briefs (
   answers jsonb not null default '{}'::jsonb, generated_prompt text not null default '', generated_site_html text not null default '',
   preview_token_hash text unique, preview_expires_at timestamptz, photo_paths jsonb not null default '[]'::jsonb,
   request_email_sent_at timestamptz, preview_email_sent_at timestamptz, email_last_error text,
+  ai_generation_status text not null default 'not_started' check (ai_generation_status in ('not_started','pending','processing','ready','complete','failed','email_failed')),
+  ai_generation_error text, ai_generation_started_at timestamptz, ai_generated_at timestamptz,
+  ai_model text, ai_input_tokens integer, ai_output_tokens integer,
   status text not null default 'nouveau' check (status in ('nouveau','en_cours','apercu_envoye','converti','archive')),
   created_at timestamptz not null default now()
 );
@@ -44,6 +47,16 @@ alter table public.briefs add column if not exists preview_expires_at timestampt
 alter table public.briefs add column if not exists request_email_sent_at timestamptz;
 alter table public.briefs add column if not exists preview_email_sent_at timestamptz;
 alter table public.briefs add column if not exists email_last_error text;
+alter table public.briefs add column if not exists ai_generation_status text not null default 'not_started';
+alter table public.briefs add column if not exists ai_generation_error text;
+alter table public.briefs add column if not exists ai_generation_started_at timestamptz;
+alter table public.briefs add column if not exists ai_generated_at timestamptz;
+alter table public.briefs add column if not exists ai_model text;
+alter table public.briefs add column if not exists ai_input_tokens integer;
+alter table public.briefs add column if not exists ai_output_tokens integer;
+alter table public.briefs drop constraint if exists briefs_ai_generation_status_check;
+alter table public.briefs add constraint briefs_ai_generation_status_check check (ai_generation_status in ('not_started','pending','processing','ready','complete','failed','email_failed'));
+create index if not exists briefs_ai_generation_status_created_idx on public.briefs(ai_generation_status, created_at);
 create table if not exists public.clients (
   id uuid primary key default gen_random_uuid(), company_name text not null, contact_name text not null default '',
   contact_email text not null, contact_phone text not null default '', plan text not null default '',

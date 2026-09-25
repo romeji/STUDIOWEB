@@ -2,6 +2,8 @@ const MAX_TOTAL_IMAGE_BYTES = 2_500_000;
 const MAX_IMAGE_BYTES = 500_000;
 const allowedTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
 const { sendTransactionalEmail, receivedEmail, recordSentEmail } = require('./_lib/transactional-email');
+const { waitUntil } = require('@vercel/functions');
+const { generateBriefSite } = require('./_lib/ai-site-generation');
 
 function respond(res, status, body) {
   res.setHeader('Cache-Control', 'no-store');
@@ -70,7 +72,8 @@ module.exports = async function handler(req, res) {
       answers,
       generated_prompt: String(payload.prompt || '').slice(0, 50000),
       photo_paths: photoPaths,
-      status: 'nouveau'
+      status: 'nouveau',
+      ai_generation_status: 'pending'
     };
     const insert = await fetch(`${SUPABASE_URL}/rest/v1/briefs`, {
       method: 'POST',
@@ -97,7 +100,12 @@ module.exports = async function handler(req, res) {
         body: JSON.stringify(emailPatch)
       });
     } catch (statusError) { console.error('État du courriel de confirmation non enregistré:', statusError.message); }
-    return respond(res, 201, { ok: true, reference: id, requestEmailSent });
+    try { waitUntil(generateBriefSite(id)); }
+    catch (scheduleError) {
+      console.error('Tâche IA asynchrone indisponible:', scheduleError.message);
+      void generateBriefSite(id);
+    }
+    return respond(res, 202, { ok: true, reference: id, requestEmailSent, generation: 'pending' });
   } catch (error) {
     console.error('Enregistrement du brief impossible:', error.message);
     return respond(res, 500, { error: 'Votre demande n’a pas pu être enregistrée. Réessayez ou contactez JL Studio par e-mail.' });

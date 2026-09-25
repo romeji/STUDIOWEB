@@ -1,5 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "outputDirectory": ".",
-  "cleanUrls": true
+  "cleanUrls": true,
+  "functions": {
+    "api/briefs.js": { "maxDuration": 300 },
+    "api/briefs/retry-generation.js": { "maxDuration": 300 }
+  }
 }
