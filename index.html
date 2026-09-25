@@ -2001,6 +2001,32 @@
         .example-mockup { inset: 0; width: 100%; height: 100%; padding: 0; transform: none; border-radius: 0; box-shadow: none; }
         .example-card:hover .example-mockup { transform: none; }
         .example-mockup img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+
+        /* Hero mobile : conserver les trois chiffres sur une ligne et remonter l’aperçu. */
+        @media (max-width: 768px) {
+            .hero-content { gap:20px; padding:26px 16px 112px; }
+            .hero-text h1 { font-size:clamp(2rem,8vw,2.8rem); margin-bottom:8px; }
+            .hero-subtitle { font-size:1rem; line-height:1.4; margin-bottom:12px; }
+            .hero-features { margin:14px 0; gap:8px; }
+            .feature-badge { padding:8px 11px; font-size:.74rem; }
+            .hero-text > .cta-button { margin-top:6px; padding:12px 22px; font-size:.95rem; }
+            .stats-ticker { display:flex; width:100%; justify-content:space-between; gap:6px; margin-top:14px; }
+            .stat-item { flex:1 1 0; min-width:0; }
+            .stat-number { font-size:clamp(1.25rem,5.8vw,2rem); white-space:nowrap; }
+            .stat-label { font-size:clamp(.62rem,2.7vw,.78rem); line-height:1.2; }
+            .hero-visual { width:min(100%,540px); margin:0 auto; }
+            .code-window { width:100%; }
+            .window-header { padding:8px 12px; }
+            .window-dot { width:9px; height:9px; }
+            .code-content { padding:14px 10px; font-size:clamp(.58rem,2.6vw,.78rem); line-height:1.42; }
+            .code-line { margin:2px 0; padding-left:22px; white-space:nowrap; }
+        }
+        @media (max-width:380px) {
+            .stats-ticker { gap:2px; }
+            .stat-number { font-size:1.2rem; }
+            .stat-label { font-size:.6rem; }
+            .feature-badge { padding:7px 9px; font-size:.68rem; }
+        }
     </style>	
 </head>
 <body class="loader-active">
@@ -2567,14 +2593,15 @@
             });
         }
 
-        // Animation parallax subtile
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const parallaxElements = document.querySelectorAll('.hero-visual');
-            parallaxElements.forEach(el => {
-                el.style.transform = `translateY(${scrolled * 0.3}px)`;
-            });
-        });
+        // Parallax uniquement sur grand écran pour garder l’aperçu visible sur mobile.
+        if (window.matchMedia('(min-width: 969px) and (prefers-reduced-motion: no-preference)').matches) {
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                document.querySelectorAll('.hero-visual').forEach(el => {
+                    el.style.transform = `translateY(${scrolled * 0.3}px)`;
+                });
+            }, { passive: true });
+        }
         
         // Fonction de notification
         function showNotification(message, type = 'info') {
