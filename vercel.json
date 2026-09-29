@@ -2,6 +2,11 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "outputDirectory": ".",
   "cleanUrls": true,
+  "rewrites": [
+    { "source": "/api/subscriptions/:action", "destination": "/api/subscriptions?action=:action" },
+    { "source": "/api/emails/retry-request", "destination": "/api/emails?action=retry-request" },
+    { "source": "/api/emails/retry-message-notification", "destination": "/api/emails?action=retry-message-notification" }
+  ],
   "functions": {
     "api/briefs.js": { "maxDuration": 60 }
   }

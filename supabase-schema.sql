@@ -65,6 +65,11 @@ create table if not exists public.clients (
   official_site_url text, official_site_email_sent_at timestamptz,
   brief_id uuid unique references public.briefs(id) on delete set null,
   started_at date, canceled_at timestamptz,
+  cancellation_requested_at timestamptz, cancellation_effective_at timestamptz,
+  customer_type text, terms_accepted_at timestamptz, terms_version text,
+  withdrawal_info_acknowledged_at timestamptz, early_start_requested boolean not null default false,
+  contract_started_at timestamptz, withdrawal_requested_at timestamptz,
+  withdrawal_status text, withdrawal_declaration text, withdrawal_refund_cents integer, withdrawal_refund_id text,
   created_at timestamptz not null default now()
 );
 alter table public.clients add column if not exists brief_id uuid unique references public.briefs(id) on delete set null;
@@ -73,6 +78,17 @@ alter table public.clients add column if not exists official_site_url text;
 alter table public.clients add column if not exists official_site_email_sent_at timestamptz;
 alter table public.clients add column if not exists welcome_email_sent_at timestamptz;
 alter table public.clients add column if not exists welcome_email_last_error text;
+alter table public.clients add column if not exists customer_type text;
+alter table public.clients add column if not exists terms_accepted_at timestamptz;
+alter table public.clients add column if not exists terms_version text;
+alter table public.clients add column if not exists withdrawal_info_acknowledged_at timestamptz;
+alter table public.clients add column if not exists early_start_requested boolean not null default false;
+alter table public.clients add column if not exists contract_started_at timestamptz;
+alter table public.clients add column if not exists withdrawal_requested_at timestamptz;
+alter table public.clients add column if not exists withdrawal_status text;
+alter table public.clients add column if not exists withdrawal_declaration text;
+alter table public.clients add column if not exists withdrawal_refund_cents integer;
+alter table public.clients add column if not exists withdrawal_refund_id text;
 create table if not exists public.edit_logs (
   id uuid primary key default gen_random_uuid(), client_id uuid not null references public.clients(id) on delete cascade,
   description text not null default 'Petite retouche', created_at timestamptz not null default now()
@@ -101,8 +117,43 @@ create table if not exists public.prospects (
   id uuid primary key default gen_random_uuid(), company_name text not null, activity text not null default '',
   city text not null default 'Dijon', website text not null default '', email text not null default '',
   phone text not null default '', status text not null default 'a_contacter', notes text not null default '',
-  contacted_at timestamptz, created_at timestamptz not null default now()
+  contacted_at timestamptz, created_at timestamptz not null default now(),
+  classification text not null default 'a_qualifier', comments text not null default '',
+  source_url text, email_source_url text not null default '',
+  email_confidence text not null default '', website_status text not null default '', source_checked_at date,
+  siren text not null default '', siret text not null default '', last_prospected_at timestamptz
 );
+alter table public.prospects add column if not exists classification text not null default 'a_qualifier';
+alter table public.prospects add column if not exists comments text not null default '';
+alter table public.prospects add column if not exists source_url text;
+alter table public.prospects add column if not exists email_source_url text not null default '';
+alter table public.prospects add column if not exists email_confidence text not null default '';
+alter table public.prospects add column if not exists website_status text not null default '';
+alter table public.prospects add column if not exists source_checked_at date;
+alter table public.prospects add column if not exists siren text not null default '';
+alter table public.prospects add column if not exists siret text not null default '';
+alter table public.prospects add column if not exists last_prospected_at timestamptz;
+alter table public.prospects drop constraint if exists prospects_classification_check;
+alter table public.prospects add constraint prospects_classification_check check (classification in ('a_qualifier','site_existant','non_prospectable','site_non_identifie'));
+update public.prospects set source_url = null where source_url = '';
+alter table public.prospects alter column source_url drop not null;
+alter table public.prospects alter column source_url drop default;
+drop index if exists public.prospects_source_url_unique;
+create unique index if not exists prospects_source_url_unique on public.prospects(source_url);
+create index if not exists prospects_status_classification_idx on public.prospects(status, classification, company_name);
+create index if not exists prospects_last_prospected_idx on public.prospects(last_prospected_at desc);
+create table if not exists public.prospect_emails (
+  id uuid primary key default gen_random_uuid(), prospect_id uuid not null references public.prospects(id) on delete cascade,
+  recipient_email text not null, subject text not null, body_text text not null, provider_message_id text not null default '',
+  idempotency_key text not null unique, status text not null check (status in ('sending','sent','failed')),
+  error_message text not null default '', created_at timestamptz not null default now()
+);
+create index if not exists prospect_emails_prospect_created_idx on public.prospect_emails(prospect_id, created_at desc);
+alter table public.prospect_emails enable row level security;
+drop policy if exists "JL admin reads prospect emails" on public.prospect_emails;
+create policy "JL admin reads prospect emails" on public.prospect_emails for select to authenticated using (public.is_jl_admin());
+revoke all on public.prospect_emails from anon;
+grant select on public.prospect_emails to authenticated;
 create table if not exists public.brief_submission_limits (
   ip_hash text not null, hour_bucket timestamptz not null default date_trunc('hour', now()),
   attempts integer not null default 1, primary key (ip_hash, hour_bucket)
@@ -191,6 +242,7 @@ alter table public.edit_logs enable row level security;
 alter table public.client_messages enable row level security;
 alter table public.client_emails enable row level security;
 alter table public.prospects enable row level security;
+alter table public.prospect_emails enable row level security;
 drop policy if exists "JL admin reads briefs" on public.briefs;
 create policy "JL admin reads briefs" on public.briefs for select to authenticated using (public.is_jl_admin());
 drop policy if exists "JL admin updates briefs" on public.briefs;
@@ -210,6 +262,9 @@ create policy "JL admin manages prospects" on public.prospects for all to authen
 revoke all on public.briefs, public.clients, public.edit_logs, public.client_messages, public.client_emails, public.prospects from anon;
 grant select, update on public.briefs to authenticated;
 grant select, insert, update, delete on public.clients, public.edit_logs, public.prospects to authenticated;
+grant select on public.prospect_emails to authenticated;
+grant select, update on public.prospects to service_role;
+grant select, insert, update on public.prospect_emails to service_role;
 grant select, update on public.client_messages to authenticated;
 grant select on public.client_emails to authenticated;
 grant insert on public.briefs to service_role;

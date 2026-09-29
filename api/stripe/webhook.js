@@ -2,6 +2,8 @@ const crypto = require('crypto');
 const { json, supabaseRequest } = require('../_lib/admin-auth');
 const { stripeRequest, PLANS } = require('../_lib/stripe-billing');
 const { sendTransactionalEmail, welcomeEmail, recordSentEmail } = require('../_lib/transactional-email');
+const { createCorrectionToken, createCancellationToken, createWithdrawalToken } = require('../_lib/correction-links');
+const { SITE_URL } = require('../_lib/site-url');
 
 module.exports.config = { api: { bodyParser: false } };
 
@@ -53,9 +55,19 @@ async function syncSubscription(subscriptionId, clientIdHint) {
   };
   if (status === 'active') update.stripe_checkout_session_id = null;
   if (status === 'active' && subscription.start_date) update.started_at = new Date(subscription.start_date * 1000).toISOString().slice(0, 10);
+  if (subscription.cancel_at_period_end) {
+    update.cancellation_effective_at = new Date(Number(subscription.cancel_at || subscription.current_period_end) * 1000).toISOString();
+  } else if (status !== 'canceled') {
+    update.cancellation_requested_at = null;
+    update.cancellation_effective_at = null;
+  }
   if (status === 'canceled') update.canceled_at = subscription.canceled_at
     ? new Date(subscription.canceled_at * 1000).toISOString()
     : new Date().toISOString();
+  if (status === 'canceled') {
+    const effectiveEnd = subscription.ended_at || subscription.cancel_at || subscription.current_period_end || subscription.canceled_at;
+    if (effectiveEnd) update.cancellation_effective_at = new Date(effectiveEnd * 1000).toISOString();
+  }
   const rows = await supabaseRequest(`clients?${filter}&select=id`, {
     method: 'PATCH', headers: { Prefer: 'return=representation' }, body: JSON.stringify(update)
   });
@@ -91,15 +103,26 @@ module.exports = async function handler(req, res) {
     if ((event.type === 'checkout.session.completed' || event.type === 'checkout.session.async_payment_succeeded')
       && object?.mode === 'subscription' && object?.subscription
       && ['paid', 'no_payment_required'].includes(object.payment_status)) {
+      const paidClientId = object.client_reference_id || object.metadata?.client_id;
+      const existingContract = await supabaseRequest(`clients?id=eq.${encodeURIComponent(paidClientId)}&select=contract_started_at&limit=1`);
+      if (!existingContract?.[0]?.contract_started_at) await supabaseRequest(`clients?id=eq.${encodeURIComponent(paidClientId)}`, {
+        method: 'PATCH', headers: { Prefer: 'return=minimal' },
+        body: JSON.stringify({ contract_started_at: new Date(Number(object.created || event.created) * 1000).toISOString() })
+      });
       await syncSubscription(object.subscription, object.client_reference_id || object.metadata?.client_id);
       const clientId = object.client_reference_id || object.metadata?.client_id;
-      const clients = await supabaseRequest(`clients?id=eq.${encodeURIComponent(clientId)}&select=id,brief_id,company_name,contact_name,contact_email,plan,monthly_price_cents,welcome_email_sent_at`);
+      const clients = await supabaseRequest(`clients?id=eq.${encodeURIComponent(clientId)}&select=id,brief_id,company_name,contact_name,contact_email,plan,monthly_price_cents,welcome_email_sent_at,customer_type,contract_started_at`);
       const client = clients?.[0];
       const plan = PLANS[String(object.metadata?.plan || '').toLowerCase()];
       if (!client || !plan) throw new Error('Impossible de préparer le courriel de bienvenue : fiche client ou formule absente.');
       if (!client.welcome_email_sent_at) {
         try {
-          const mail = welcomeEmail(client, plan, Number.isInteger(object.amount_total) ? object.amount_total : plan.monthly + plan.creation);
+          const correctionToken = createCorrectionToken(client.id);
+          const correctionUrl = `${SITE_URL}/demande-correction?token=${encodeURIComponent(correctionToken)}`;
+          const cancellationToken = createCancellationToken(client.id);
+          const cancellationUrl = `${SITE_URL}/resiliation?token=${encodeURIComponent(cancellationToken)}`;
+          const withdrawalUrl = client.customer_type === 'consumer' ? `${SITE_URL}/retractation?token=${encodeURIComponent(createWithdrawalToken(client.id))}` : '';
+          const mail = welcomeEmail(client, plan, Number.isInteger(object.amount_total) ? object.amount_total : plan.monthly + plan.creation, correctionUrl, cancellationUrl, withdrawalUrl);
           const providerId = await sendTransactionalEmail({
             to: client.contact_email,
             ...mail,

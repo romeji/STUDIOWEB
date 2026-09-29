@@ -1,7 +1,6 @@
 const { json, requireAdmin, supabaseRequest } = require('../_lib/admin-auth');
 const { PLANS, stripeRequest, ensurePlanCatalog } = require('../_lib/stripe-billing');
-
-const SITE_URL = 'https://studioweb-eta.vercel.app';
+const { SITE_URL } = require('../_lib/site-url');
 
 function normalizePlan(value) {
   const name = String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();

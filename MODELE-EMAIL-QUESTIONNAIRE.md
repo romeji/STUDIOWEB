@@ -1,6 +1,6 @@
 # Modèle d’email pour demander le brief
 
-**Lien unique du questionnaire :** https://studioweb-eta.vercel.app/questionnaire
+**Lien unique du questionnaire :** https://jlstudioweb.fr/questionnaire
 
 ## Premier email
 
@@ -10,7 +10,7 @@ Bonjour [Prénom],
 
 Comme convenu, voici le questionnaire qui va me permettre de découvrir votre activité et de préparer un premier aperçu de votre site :
 
-👉 https://studioweb-eta.vercel.app/questionnaire
+👉 https://jlstudioweb.fr/questionnaire
 
 Vous pouvez le remplir en quelques minutes. À partir de vos réponses, je préparerai une première proposition que je vous enverrai par email. Nous pourrons ensuite l’adapter et l’améliorer ensemble avant toute décision.
 

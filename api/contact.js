@@ -12,23 +12,25 @@ module.exports = async function handler(req, res) {
   if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SECRET_KEY) return respond(res, 503, { error: 'Le formulaire de contact est momentanément indisponible. Écrivez directement à jerome.lopes21@gmail.com.' });
   const data = req.body && typeof req.body === 'object' ? req.body : {};
   if (data.website) return respond(res, 200, { ok: true });
-  const required = ['nom', 'prenom', 'code_postal', 'telephone', 'email', 'activite', 'message'];
-  if (required.some(key => !String(data[key] || '').trim()) || data.consent !== true) return respond(res, 400, { error: 'Complétez les champs obligatoires et confirmez la politique de confidentialité.' });
+  const required = ['nom', 'email', 'message'];
+  if (required.some(key => !String(data[key] || '').trim())) return respond(res, 400, { error: 'Renseignez votre nom, votre adresse e-mail et votre message.' });
   const email = String(data.email).trim().toLowerCase();
   if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return respond(res, 400, { error: 'Adresse e-mail invalide.' });
-  if (!/^\d{5}$/.test(String(data.code_postal))) return respond(res, 400, { error: 'Le code postal doit contenir 5 chiffres.' });
+  const postalCode = String(data.code_postal || '').trim();
+  if (postalCode && !/^\d{5}$/.test(postalCode)) return respond(res, 400, { error: 'Le code postal doit contenir 5 chiffres.' });
   if (String(data.message).length > 8000) return respond(res, 413, { error: 'Le message est trop long (8 000 caractères maximum).' });
   try {
     if (!await checkRateLimit(req)) return respond(res, 429, { error: 'Trop de messages ont été envoyés. Réessayez un peu plus tard.' });
     const clientsResponse = await fetch(`${process.env.SUPABASE_URL}/rest/v1/clients?contact_email=eq.${encodeURIComponent(email)}&select=id&limit=1`, { headers: { apikey: process.env.SUPABASE_SECRET_KEY } });
     const clients = clientsResponse.ok ? await clientsResponse.json() : [];
+    const fullName = [String(data.prenom || '').trim(), String(data.nom || '').trim()].filter(Boolean).join(' ').slice(0, 180);
     const message = {
       id: crypto.randomUUID(), kind: 'contact', status: 'new', direction: 'inbound',
-      name: `${String(data.prenom).trim()} ${String(data.nom).trim()}`.slice(0, 180),
+      name: fullName,
       company_name: String(data.societe || '').trim().slice(0, 180), email,
-      phone: String(data.telephone).trim().slice(0, 60), postal_code: String(data.code_postal),
-      activity: String(data.activite).trim().slice(0, 180), callback_time: String(data.moment || '').slice(0, 40),
-      subject: `Demande de contact JL Studio — ${String(data.prenom).trim()} ${String(data.nom).trim()}`.slice(0, 240),
+      phone: String(data.telephone || '').trim().slice(0, 60), postal_code: postalCode,
+      activity: String(data.activite || '').trim().slice(0, 180), callback_time: String(data.moment || '').slice(0, 40),
+      subject: `Demande de contact JL Studio — ${fullName}`.slice(0, 240),
       message: String(data.message).trim(), client_id: clients?.[0]?.id || null, brief_id: null
     };
     let stored = false;

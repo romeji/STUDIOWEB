@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#11101a">
+  <title>Résilier mon abonnement — JL Studio Web</title>
+  <style>
+    :root{color-scheme:dark;--bg:#11101a;--panel:#1b1927;--line:#343044;--text:#f7f5fc;--muted:#c1bdce;--violet:#7865e8;--green:#b4f1cc;--red:#ffc3c3}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0,#292440 0,transparent 56%),var(--bg);color:var(--text);font:16px/1.6 Inter,system-ui,-apple-system,Segoe UI,sans-serif;display:grid;grid-template-rows:auto 1fr auto}
+    header,footer{width:min(100% - 36px,980px);margin:auto}header{padding:24px 0;display:flex;align-items:center;justify-content:space-between;gap:16px}header a{color:var(--text);text-decoration:none;font-weight:800}header nav{display:flex;gap:10px;flex-wrap:wrap}header nav a{font-size:14px;border:1px solid var(--line);padding:9px 13px;border-radius:999px}
+    main{width:min(100% - 36px,690px);margin:34px auto 70px}.card{background:rgba(27,25,39,.94);border:1px solid var(--line);border-radius:22px;padding:clamp(22px,5vw,42px);box-shadow:0 24px 80px #0004}h1{font-size:clamp(30px,6vw,44px);line-height:1.12;letter-spacing:-.04em;margin:5px 0 14px}.eyebrow{color:#b7aaff;font-size:12px;letter-spacing:.15em;font-weight:800;text-transform:uppercase}p{color:var(--muted)}.terms{padding:18px;background:#14131c;border:1px solid var(--line);border-radius:14px;margin:22px 0}.terms p{margin:8px 0}.terms strong{color:var(--text)}label{display:block;font-weight:700;margin:14px 0 7px}input{width:100%;padding:14px 15px;border-radius:11px;border:1px solid #49445d;background:#12111a;color:var(--text);font:inherit}button,.button{display:inline-flex;justify-content:center;align-items:center;min-height:48px;padding:12px 19px;border:0;border-radius:11px;background:var(--violet);color:white;text-decoration:none;font:inherit;font-weight:800;cursor:pointer}button:hover,.button:hover{filter:brightness(1.08)}button:disabled{opacity:.65;cursor:wait}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}.secondary{background:transparent;border:1px solid var(--line)}.message{margin-top:16px;padding:14px;border-radius:12px;background:#211f2b;color:var(--muted)}.message[hidden]{display:none}.message.success{color:var(--green)}.message.error{color:var(--red)}.fine{font-size:13px;color:#a7a2b5}footer{padding:20px 0 28px;color:#9994a7;font-size:13px;border-top:1px solid #2b2935}footer a{color:#c5bcff}
+    @media(max-width:520px){header{align-items:flex-start;flex-direction:column}main{margin-top:12px}.actions>*{width:100%}}
+  </style>
+  <link rel="icon" type="image/png" sizes="512x512" href="/assets/brand/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/brand/jl-studio-web-google.png">
+</head>
+<body>
+  <header><a href="/">JL STUDIO <span style="color:#a99cff">&lt;Web&gt;</span></a><nav><a href="/">Accueil</a><a href="/contact">Nous contacter</a></nav></header>
+  <main><section class="card" aria-labelledby="title">
+    <div class="eyebrow">Gestion de votre abonnement</div>
+    <h1 id="title">Résilier mon abonnement</h1>
+    <p>La résiliation est gratuite et prend effet à la fin de la période déjà payée. Vous pourrez utiliser le site jusque-là ; ensuite l’hébergement JL Studio et la licence d’exploitation prendront fin.</p>
+    <div class="terms"><p><strong>Votre nom de domaine reste à vous.</strong> Vous en êtes le titulaire. Sur demande, JL Studio transmet le code de transfert et les informations nécessaires sous cinq jours ouvrés. Vous devrez organiser son renouvellement après la fin de l’abonnement ; les éventuels frais facturés par le registrar restent à votre charge.</p><p>Aucun nouvel abonnement ne sera prélevé après la date de fin. La période mensuelle déjà commencée n’est pas remboursée au prorata, sous réserve de vos droits légaux, notamment le droit de rétractation applicable aux consommateurs.</p></div>
+    <form id="emailForm"><div id="emailStage"><label for="email">Adresse e-mail utilisée pour votre abonnement</label><input id="email" type="email" autocomplete="email" required maxlength="254" placeholder="vous@exemple.fr"><div class="actions"><button type="submit" id="sendLink">Recevoir mon lien de résiliation</button></div></div></form>
+    <div id="confirmStage" hidden><p>Votre demande concerne l’abonnement associé à cette adresse. En cliquant ci-dessous, vous confirmez l’arrêt des renouvellements automatiques à la fin de la période déjà payée.</p><div class="actions"><button type="button" id="confirmCancel">Confirmer la résiliation</button><a class="button secondary" href="/contact">J’ai une question</a></div></div>
+    <div id="message" class="message" role="status" aria-live="polite" hidden></div>
+    <p class="fine">Vous pouvez aussi nous écrire à <a href="mailto:contact@jlstudioweb.fr" style="color:#c5bcff">contact@jlstudioweb.fr</a> ou nous appeler au 06 67 03 66 61.</p>
+  </section></main>
+  <footer>JL Studio Web · Dijon, Bourgogne · <a href="/politique-confidentialite">Politique de confidentialité</a> · <a href="/mentions-legales">Mentions légales</a></footer>
+  <script>
+    const params=new URLSearchParams(location.search),token=params.get('token'),form=document.getElementById('emailForm'),message=document.getElementById('message');
+    function show(text,kind=''){message.textContent=text;message.className=`message ${kind}`;message.hidden=false;}
+    if(token){document.getElementById('emailStage').hidden=true;document.getElementById('confirmStage').hidden=false;}
+    form.addEventListener('submit',async event=>{event.preventDefault();const button=document.getElementById('sendLink');button.disabled=true;button.textContent='Envoi…';try{const response=await fetch('/api/subscriptions/send-cancel-link',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:document.getElementById('email').value})});const data=await response.json();if(!response.ok)throw new Error(data.error||'Envoi impossible.');show(data.message,'success');}catch(error){show(error.message,'error');}finally{button.disabled=false;button.textContent='Recevoir mon lien de résiliation';}});
+    document.getElementById('confirmCancel').addEventListener('click',async event=>{const button=event.currentTarget;button.disabled=true;button.textContent='Enregistrement…';try{const response=await fetch('/api/subscriptions/request-cancel',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token})});const data=await response.json();if(!response.ok)throw new Error(data.error||'La demande n’a pas abouti.');if(data.alreadyCanceled){show('Cet abonnement est déjà terminé.','success');}else if(data.alreadyScheduled){show('La résiliation est déjà programmée. Vous recevrez une confirmation par e-mail.','success');}else{const date=data.effectiveAt?new Intl.DateTimeFormat('fr-FR',{dateStyle:'long',timeZone:'Europe/Paris'}).format(new Date(data.effectiveAt)):'la fin de la période payée';show(`Votre résiliation est enregistrée. Elle prendra effet le ${date}. Une confirmation vous a été envoyée par e-mail.`,'success');}button.hidden=true;}catch(error){show(error.message,'error');button.disabled=false;button.textContent='Confirmer la résiliation';}});
+  </script>
+</body>
+</html>

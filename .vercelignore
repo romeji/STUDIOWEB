@@ -1,0 +1,8 @@
+.env*
+.git/
+.github/
+.vercel/
+node_modules/
+internal/
+*.md
+*.sql

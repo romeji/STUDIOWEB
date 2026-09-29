@@ -1,16 +1,23 @@
 const crypto = require('crypto');
 const { json, supabaseRequest } = require('../_lib/admin-auth');
 const { PLANS, stripeRequest, ensurePlanCatalog } = require('../_lib/stripe-billing');
+const { SITE_URL } = require('../_lib/site-url');
 
-const SITE_URL = 'https://studioweb-eta.vercel.app';
 
 module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'POST') return json(res, 405, { error: 'Méthode non autorisée.' });
   const token = String(req.body?.token || '');
   const planKey = String(req.body?.plan || '');
+  const customerType = String(req.body?.customerType || '');
+  const acceptedTerms = req.body?.acceptedTerms === true;
+  const withdrawalInfoAcknowledged = req.body?.withdrawalInfoAcknowledged === true;
+  const earlyStartRequested = req.body?.earlyStartRequested === true;
   if (!/^[A-Za-z0-9_-]{40,60}$/.test(token)) return json(res, 404, { error: 'Ce lien de paiement est invalide ou expiré.' });
   if (!PLANS[planKey]) return json(res, 400, { error: 'Choisissez une formule disponible.' });
+  if (!['consumer', 'professional'].includes(customerType)) return json(res, 400, { error: 'Indiquez si vous souscrivez comme particulier ou professionnel.' });
+  if (!acceptedTerms) return json(res, 400, { error: 'Vous devez accepter les conditions générales avant de poursuivre.' });
+  if (customerType === 'consumer' && !withdrawalInfoAcknowledged) return json(res, 400, { error: 'Veuillez confirmer la prise en compte de votre droit de rétractation.' });
   if (!process.env.SUPABASE_SECRET_KEY) return json(res, 503, { error: 'La base de suivi n’est pas configurée.' });
 
   try {
@@ -22,7 +29,7 @@ module.exports = async function handler(req, res) {
     if (existing?.[0]?.subscription_status === 'active') return json(res, 409, { error: 'Un abonnement est déjà actif pour ce projet. Contactez JL Studio pour toute évolution.' });
     if (existing?.[0]?.stripe_checkout_session_id) {
       const previous = await stripeRequest(`checkout/sessions/${encodeURIComponent(existing[0].stripe_checkout_session_id)}`);
-      if (previous.status === 'open' && previous.url && previous.metadata?.plan === planKey) return json(res, 200, { ok: true, url: previous.url, resumed: true });
+      if (previous.status === 'open' && previous.url && previous.metadata?.plan === planKey && previous.metadata?.customer_type === customerType && previous.metadata?.early_start_requested === String(customerType === 'consumer' && earlyStartRequested)) return json(res, 200, { ok: true, url: previous.url, resumed: true });
       if (previous.status === 'open' && previous.metadata?.plan !== planKey) await stripeRequest(`checkout/sessions/${encodeURIComponent(previous.id)}/expire`, { method: 'POST', params: new URLSearchParams() });
       if (previous.status === 'complete') return json(res, 409, { error: 'Votre paiement est en cours de confirmation. Actualisez dans quelques instants ou contactez JL Studio.' });
     }
@@ -34,7 +41,10 @@ module.exports = async function handler(req, res) {
       body: JSON.stringify({
         brief_id: brief.id, company_name: brief.company_name, contact_name: brief.contact_name || '',
         contact_email: brief.contact_email, contact_phone: brief.contact_phone || '', plan: plan.label,
-        monthly_price_cents: plan.monthly, subscription_status: 'pending', provider: 'stripe'
+        monthly_price_cents: plan.monthly, subscription_status: 'pending', provider: 'stripe',
+        customer_type: customerType, terms_accepted_at: new Date().toISOString(), terms_version: '2026-09-26-provisional-v1',
+        withdrawal_info_acknowledged_at: customerType === 'consumer' ? new Date().toISOString() : null,
+        early_start_requested: customerType === 'consumer' && earlyStartRequested
       })
     });
     const client = clients?.[0];
@@ -48,9 +58,13 @@ module.exports = async function handler(req, res) {
       'line_items[0][price]': monthly.id, 'line_items[0][quantity]': '1',
       'line_items[1][price]': creation.id, 'line_items[1][quantity]': '1',
       'metadata[client_id]': client.id, 'metadata[brief_id]': brief.id, 'metadata[plan]': planKey,
+      'metadata[customer_type]': customerType, 'metadata[terms_version]': '2026-09-26-provisional-v1',
+      'metadata[early_start_requested]': String(customerType === 'consumer' && earlyStartRequested),
       'subscription_data[metadata][client_id]': client.id,
       'subscription_data[metadata][brief_id]': brief.id,
       'subscription_data[metadata][plan]': planKey,
+      'subscription_data[metadata][customer_type]': customerType,
+      'subscription_data[metadata][early_start_requested]': String(customerType === 'consumer' && earlyStartRequested),
       success_url: `${SITE_URL}/paiement-confirme?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${SITE_URL}/paiement.html?token=${encodeURIComponent(token)}&annule=1`,
       billing_address_collection: 'auto', 'phone_number_collection[enabled]': 'true',
@@ -59,7 +73,7 @@ module.exports = async function handler(req, res) {
     // Stripe Checkout presents methods enabled in the Stripe Dashboard that are compatible with this subscription and customer.
     const session = await stripeRequest('checkout/sessions', {
       method: 'POST', params,
-      idempotencyKey: `jl-studio-public-${brief.id}-${planKey}-${new Date().toISOString().slice(0,10)}`
+      idempotencyKey: `jl-studio-public-${brief.id}-${planKey}-${customerType}-${customerType === 'consumer' && earlyStartRequested}-${Date.now()}`
     });
     await supabaseRequest(`clients?id=eq.${encodeURIComponent(client.id)}`, {
       method: 'PATCH', headers: { Prefer: 'return=minimal' },

@@ -3,7 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚡ JL Studio </Web> - Sites vitrine par abonnement dès 49 €/mois</title>
+    <title>Création de site internet à Dijon dès 49 €/mois | JL Studio Web</title>
+    <meta name="description" content="À Dijon et en Bourgogne, JL Studio Web crée des sites vitrines pour artisans et petites entreprises. Formules dès 49 €/mois (+ création), hébergement inclus.">
+    <link rel="canonical" href="https://www.jlstudioweb.fr/">
+    <meta name="theme-color" content="#171329">
+    <meta property="og:image" content="https://www.jlstudioweb.fr/assets/brand/jl-studio-web-google.png">
+    <meta property="og:image:alt" content="Logo JL Studio Web avec un éclair violet et doré">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Création de site internet à Dijon | JL Studio Web">
+    <meta name="twitter:description" content="À Dijon et en Bourgogne, des sites vitrines pour artisans et petites entreprises. Formules dès 49 €/mois (+ création), hébergement inclus.">
+    <meta name="twitter:image" content="https://www.jlstudioweb.fr/assets/brand/jl-studio-web-google.png">
+    <meta name="google-site-verification" content="b2G2YkhRaxAGO7sJmGXj5fFAxv2Bhu3cWN9eAO_laQ4">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="fr_FR">
+    <meta property="og:title" content="Création de site internet à Dijon dès 49 €/mois | JL Studio Web">
+    <meta property="og:description" content="À Dijon et en Bourgogne, JL Studio Web crée des sites vitrines pour artisans et petites entreprises. Formules dès 49 €/mois (+ création), hébergement inclus.">
+    <meta property="og:url" content="https://www.jlstudioweb.fr/">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "@id": "https://www.jlstudioweb.fr/#business",
+      "name": "JL Studio Web",
+      "url": "https://www.jlstudioweb.fr/",
+      "logo": "https://www.jlstudioweb.fr/assets/brand/jl-studio-web-google.png",
+      "image": "https://www.jlstudioweb.fr/assets/brand/jl-studio-web-google.png",
+      "description": "Création et accompagnement de sites vitrines pour les professionnels à Dijon et en Bourgogne.",
+      "email": "contact@jlstudioweb.fr",
+      "telephone": "+33 6 67 03 66 61",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "27 boulevard de l’Université",
+        "postalCode": "21000",
+        "addressLocality": "Dijon",
+        "addressRegion": "Bourgogne-Franche-Comté",
+        "addressCountry": "FR"
+      },
+      "areaServed": [
+        { "@type": "City", "name": "Dijon" },
+        { "@type": "AdministrativeArea", "name": "Bourgogne-Franche-Comté" }
+      ],
+      "openingHoursSpecification": [
+        { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], "opens": "09:00", "closes": "12:00" },
+        { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], "opens": "14:00", "closes": "18:00" }
+      ]
+    }
+    </script>
     <style>
 	:root {
             --bg-primary: #ffffff;
@@ -430,6 +475,47 @@
             align-items: center;
             position: relative;
             overflow: hidden;
+        }
+
+        /* Silhouette de Dijon bord à bord, fondue dans le héros sans cadre. */
+        .hero-cityscape {
+            position: absolute;
+            z-index: 1;
+            inset: auto 0 0;
+            display: block;
+            width: 100%;
+            height: auto;
+            max-width: none;
+            border: 0;
+            border-radius: 0;
+            box-shadow: none;
+            pointer-events: none;
+            user-select: none;
+            opacity: 0;
+            transform: scale(1.015);
+            transform-origin: center bottom;
+            transition: opacity 900ms ease, transform 1400ms ease;
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 100%);
+        }
+
+        body:not(.dark-mode) .hero-cityscape-light { opacity: .31; transform: scale(1); }
+        body.dark-mode .hero-cityscape-dark { opacity: .34; transform: scale(1); }
+
+        @media (max-width: 760px) {
+            .hero-cityscape {
+                width: 100%;
+                height: clamp(200px, 54vw, 280px);
+                object-fit: cover;
+                object-position: center bottom;
+            }
+            .hero-cityscape { opacity: 0; }
+            body:not(.dark-mode) .hero-cityscape-light { opacity: .26; }
+            body.dark-mode .hero-cityscape-dark { opacity: .3; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .hero-cityscape { transition: none; transform: none; }
         }
 
         body:not(.dark-mode) .hero {
@@ -864,6 +950,14 @@
             margin-top: 50px;
         }
 
+        .what-is-intro {
+            max-width: 900px;
+            margin: 0 auto;
+            color: var(--text-secondary);
+            text-align: center;
+            line-height: 1.7;
+        }
+
         .what-is-card {
             background: var(--card-bg);
             padding: 50px;
@@ -1120,6 +1214,10 @@
         body:not(.dark-mode) .questionnaire-cta { color:#fff !important; background:linear-gradient(135deg,#51428f 0%,#7b4d87 100%) !important; border-color:rgba(255,255,255,.28) !important; }
         .dark-mode .questionnaire-cta { color:#fff !important; }
         .faq-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px 28px; margin-top:34px; }
+        .pricing-terms-marker { color:var(--accent-primary); font-size:.58em; vertical-align:super; text-decoration:none; margin-left:3px; }
+        .pricing-terms-marker:focus-visible { outline:2px solid var(--accent-primary); outline-offset:3px; border-radius:2px; }
+        .pricing-terms-note { margin:-12px 0 18px; text-align:center; color:var(--text-secondary); font-size:.84rem; }
+        .pricing-terms-note a { color:var(--accent-primary); text-decoration:underline; text-underline-offset:3px; }
         .faq-column { display:grid; align-content:start; gap:12px; }
         .faq-item { border:1px solid var(--border-color); border-radius:14px; background:var(--card-bg); padding:0 18px; }
         .faq-item summary { cursor:pointer; padding:18px 28px 18px 0; font-weight:700; color:var(--text-primary); position:relative; list-style:none; }
@@ -2051,6 +2149,8 @@
             .feature-badge { padding:7px 9px; font-size:.68rem; }
         }
     </style>	
+  <link rel="icon" type="image/png" sizes="512x512" href="/assets/brand/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/brand/jl-studio-web-google.png">
 </head>
 <body class="loader-active">
     <!-- Canvas pour effet Matrix -->
@@ -2097,6 +2197,8 @@
 
     <!-- Hero Section -->
     <div class="hero">
+        <img class="hero-cityscape hero-cityscape-light" src="assets/dijon-hero-clair.png" alt="" aria-hidden="true" draggable="false">
+        <img class="hero-cityscape hero-cityscape-dark" src="assets/dijon-hero-sombre.png" alt="" aria-hidden="true" draggable="false">
         <div class="hero-content">
             <div class="hero-text">
                 <h1><span class="hero-logo">⚡</span>JL Studio <span class="closing-tag">&lt;Web&gt;</span></h1>
@@ -2120,8 +2222,8 @@
                         <div class="stat-label">Création dès, en une fois</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number">3</div>
-                        <div class="stat-label">Formules au choix</div>
+                        <div class="stat-number">48H</div>
+                        <div class="stat-label">Livré sous</div>
                     </div>
                 </div>
             </div>
@@ -2154,6 +2256,7 @@
     <div class="what-is" id="presentation">
         <div class="container">
             <h2 class="section-title"><span>🌐</span> C'est quoi un site vitrine ?</h2>
+            <p class="what-is-intro">Vous cherchez une création de site internet à Dijon ? JL Studio Web accompagne les artisans, indépendants et petites entreprises de Dijon, de Côte-d’Or et de Bourgogne-Franche-Comté. Les formules commencent à 49 €/mois, avec les frais de création présentés séparément.</p>
             
             <div class="what-is-grid">
                 <div class="what-is-card">
@@ -2220,7 +2323,7 @@
                         <div class="timeline-number">2</div>
                         <div class="timeline-content">
                             <div class="timeline-heading"><div class="timeline-icon">🎨</div><h3>Je prépare votre maquette</h3></div>
-                            <p>À partir de vos réponses, je réalise gratuitement une première maquette de votre site vitrine et vous l’envoie par e-mail, sans engagement ni paiement demandé.</p>
+                            <p>À partir de vos réponses, je réalise gratuitement une première maquette de votre site vitrine et vous l’envoie par e-mail sous 48 heures après validation complète du questionnaire. C’est sans engagement et sans paiement demandé.</p>
                         </div>
                     </div>
 
@@ -2324,8 +2427,9 @@
 
     <div class="complementary-offers" id="abonnements">
         <div class="container">
-            <h2 class="section-title">Trois formules pour votre activité</h2>
+            <h2 class="section-title">Trois formules pour votre activité<sup><a class="pricing-terms-marker" href="/conditions-generales" aria-label="Consulter les conditions générales de vente">*</a></sup></h2>
             <p class="section-subtitle">Tous les prix affichés sont TTC. Les frais de création sont réglés une seule fois, en plus de l’abonnement mensuel.</p>
+            <p class="pricing-terms-note"><a href="/conditions-generales">* Voir les conditions de vente (CGV)</a></p>
             <div class="pricing-dots" id="pricingDots" aria-label="Choisir une formule">
                 <button type="button" data-pricing-index="0" aria-label="Afficher Essentiel" aria-pressed="true"></button>
                 <button type="button" data-pricing-index="1" aria-label="Afficher Standard" aria-pressed="false"></button>
@@ -2376,19 +2480,23 @@
             <div class="faq-grid">
                 <div class="faq-column">
                     <details class="faq-item"><summary>Combien coûte un site internet ?</summary><p>La création est réglée une fois : 199 € avec Essentiel, 149 € avec Standard ou 99 € avec Complète. L’abonnement mensuel correspondant est de 49 €, 89 € ou 129 €. Tous les tarifs affichés sont TTC.</p></details>
+                    <details class="faq-item"><summary>Combien de temps pour recevoir mon site ?</summary><p>Vous recevez une première maquette de votre site vitrine sous 48 heures après validation complète du questionnaire. Ce délai concerne l’aperçu envoyé pour relecture ; la mise en ligne définitive intervient après votre validation de la formule et la finalisation du projet.</p></details>
                     <details class="faq-item"><summary>Que comprend l’abonnement ?</summary><p>Il comprend l’hébergement, un nom de domaine standard (selon disponibilité), le HTTPS, le suivi et le quota de petites retouches prévu par la formule.</p></details>
                     <details class="faq-item"><summary>Qu’est-ce qu’un nom de domaine ?</summary><p>C’est l’adresse de votre site, par exemple mon-entreprise.fr. Nous choisissons ensemble un nom disponible au moment de la réservation. Si votre premier choix est déjà pris, nous cherchons une alternative. Une extension ou un nom premium peut entraîner un supplément.</p></details>
                     <details class="faq-item"><summary>Qu’est-ce que l’hébergement ?</summary><p>C’est l’espace serveur qui conserve les fichiers du site et le rend accessible sur Internet. Il est inclus dans l’abonnement, avec le certificat HTTPS.</p></details>
+                    <details class="faq-item"><summary>Le site m’appartient-il ?</summary><p>Vous bénéficiez d’une licence d’exploitation personnelle et non cessible pendant votre abonnement pour présenter l’activité convenue. Le code source n’est pas cédé. À la fin de l’abonnement, la licence et l’hébergement JL Studio prennent fin et le site est retiré de cet hébergement. Une reprise ou une exportation technique peut être étudiée séparément sur devis ; vos textes, photos et éléments fournis restent les vôtres.</p></details>
                     <details class="faq-item"><summary>Le site permet-il de vendre en ligne ?</summary><p>Non. JL Studio réalise des sites vitrines qui présentent votre activité, vos prestations et vos produits. Ils ne gèrent pas de boutique, de panier ni de paiement en ligne. Un lien vers un outil externe de réservation peut être envisagé selon la formule et le projet.</p></details>
                     <details class="faq-item"><summary>Que signifie « petite retouche » ?</summary><p>Par exemple, corriger un texte, remplacer une image fournie ou ajuster une couleur sur le site existant. Une refonte, une nouvelle fonctionnalité ou une nouvelle page hors forfait peut faire l’objet d’un devis.</p></details>
                 </div>
                 <div class="faq-column">
                     <details class="faq-item"><summary>Combien de retouches sont incluses ?</summary><p>Essentiel comprend une petite retouche par mois, Standard trois par mois et Complète des petites retouches illimitées. Les retouches non utilisées ne sont pas reportables.</p></details>
                     <details class="faq-item"><summary>Combien de pages comprend chaque formule ?</summary><p>Essentiel présente votre activité sur une page complète, Standard comprend jusqu’à trois pages maximum et Complète vise six pages ou plus selon le projet convenu.</p></details>
-                    <details class="faq-item"><summary>Quel est le délai de réponse par e-mail ?</summary><p>Le délai annoncé est de deux semaines maximum avec Essentiel, et de cinq jours ouvrés maximum avec Standard. La formule Complète inclut une assistance prioritaire ; le délai exact sera confirmé avant la souscription.</p></details>
+                    <details class="faq-item"><summary>Quel est le délai de réponse pour une retouche ?</summary><p>Ces délais concernent les demandes de modification après la mise en ligne de votre site, pas la création initiale de la maquette : sous deux semaines maximum avec Essentiel, sous cinq jours ouvrés maximum avec Standard. Avec Complète, vos demandes bénéficient d’un traitement prioritaire ; le délai est confirmé selon la demande.</p></details>
                     <details class="faq-item"><summary>Le questionnaire ou la maquette m’engage-t-il ?</summary><p>Non. Le questionnaire et le premier aperçu sont gratuits et sans engagement. Aucun paiement n’est demandé avant que vous ayez choisi la suite.</p></details>
                     <details class="faq-item"><summary>Puis-je demander des ajustements ?</summary><p>Oui. Après réception de l’aperçu, vous pouvez me faire part de vos retours. Les demandes seront cadrées avec vous selon la formule choisie et le périmètre du site.</p></details>
                     <details class="faq-item"><summary>Comment réserver un rendez-vous ?</summary><p>Le site peut présenter un bouton ou un lien vers un outil de réservation externe compatible. L’outil et son éventuel abonnement sont fournis par un prestataire tiers et restent soumis à ses conditions.</p></details>
+                    <details class="faq-item"><summary>Que devient mon nom de domaine si je résilie ?</summary><p>Le domaine standard est enregistré à votre nom : vous en restez titulaire après la résiliation. Vous pourrez le conserver chez le registrar ou le transférer vers le prestataire de votre choix. JL Studio vous communiquera le code de transfert et une aide raisonnable ; les frais éventuels du registrar et les renouvellements après la fin de l’abonnement sont à votre charge.</p></details>
+                    <details class="faq-item"><summary>Puis-je résilier mon abonnement ?</summary><p>Oui, sans durée minimale d’engagement et gratuitement. Faites la demande en ligne depuis le lien « Résilier mon abonnement » en bas de page, ou écrivez à <a href="mailto:contact@jlstudioweb.fr">contact@jlstudioweb.fr</a>. La résiliation arrête les prochains renouvellements et prend effet à la fin de la période mensuelle déjà payée. Le site reste hébergé jusque-là ; à cette date, l’hébergement et la licence prennent fin. Vous recevez une confirmation avec la date d’effet. Vos droits légaux, notamment le droit de rétractation des consommateurs, restent applicables.</p></details>
                 </div>
             </div>
         </div>
@@ -2412,7 +2520,7 @@
         <p>Sites vitrine par abonnement • Dès 49 €/mois + 199 € de création</p>
         <p>Créé avec passion à Dijon, au cœur de la Bourgogne.</p>
         <p><a href="/contact">Nous contacter</a></p>
-        <div class="footer-bottom"><p>© 2026 JL Studio Web. Tous droits réservés.</p><nav class="footer-legal" aria-label="Informations légales"><a href="/politique-confidentialite">Politique de confidentialité</a><a href="/mentions-legales">Mentions légales</a></nav></div>
+        <div class="footer-bottom"><p>© 2026 JL Studio Web. Tous droits réservés.</p><nav class="footer-legal" aria-label="Informations et ressources"><a href="/conseils">Conseils pratiques</a><a href="/conditions-generales">CGV provisoires</a><a href="/retractation">Droit de rétractation</a><a href="/resiliation">Résilier mon abonnement</a><a href="/politique-confidentialite">Politique de confidentialité</a><a href="/mentions-legales">Mentions légales</a></nav></div>
     </footer>
 
     <!-- Scripts -->

@@ -1,8 +1,8 @@
 const crypto = require('crypto');
 const { json, requireAdmin, supabaseRequest } = require('../_lib/admin-auth');
 const { sendTransactionalEmail, previewReadyEmail, recordSentEmail } = require('../_lib/transactional-email');
+const { SITE_URL } = require('../_lib/site-url');
 
-const SITE_URL = 'https://studioweb-eta.vercel.app';
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 module.exports = async function handler(req, res) {
